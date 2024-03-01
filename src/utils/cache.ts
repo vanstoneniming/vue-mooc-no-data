@@ -15,7 +15,7 @@ export function removeToken () {
   storage.remove(tokenPrefix)
 }
 
-// userInfo cacje
+// userInfo cache
 export function setUserInfo (userInfo: UserInfo): UserInfo {
   storage.set(userInfoPrefix, userInfo)
   return userInfo

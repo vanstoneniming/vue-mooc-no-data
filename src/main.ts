@@ -1,8 +1,8 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 import router, { setupRouter } from './router'
-import { setupElementPlus } from '@/setup/element-plus/index'
-import { setupStore } from '@/store/index'
+import { setupElementPlus } from '@/setup/element-plus'
+import { setupStore } from '@/store'
 import 'normalize.css'
 import '@/assets/styles/index.scss'
 

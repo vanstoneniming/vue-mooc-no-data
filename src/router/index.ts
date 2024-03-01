@@ -18,6 +18,36 @@ const basicRoutes: AppRouteRecordRaw[] = [
     component: () => import('@/views/home/index.vue')
   },
   {
+    path: '/help',
+    name: 'Help',
+    component: () => import('@/views/help/index.vue')
+  },
+  {
+    path: '/ceci',
+    name: 'Ceci',
+    component: () => import('@/views/ceci/index.vue')
+  },
+  {
+    path: '/ceci/:id',
+    name: 'CeciDetail',
+    component: () => import('@/views/ceci/detail.vue')
+  },
+  {
+    path: '/res',
+    name: 'Res',
+    component: () => import('@/views/res/index.vue')
+  },
+  {
+    path: '/course',
+    name: 'Course',
+    component: () => import('@/views/course/index.vue')
+  },
+  {
+    path: '/reslink',
+    name: 'Reslink',
+    component: () => import('@/views/reslink/index.vue')
+  },
+  {
     path: '/login',
     name: 'Login',
     component: () => import('@/views/login/index.vue'),
@@ -37,6 +67,38 @@ const authRoutes: AppRouteRecordRaw[] = [
     component: () => import('@/views/notice/index.vue'),
     meta: {
       title: '我的通知',
+      auth: true
+    }
+  },
+  {
+    path: '/cart',
+    component: () => import('@/views/cart/index.vue'),
+    meta: {
+      title: '购物车',
+      auth: true
+    }
+  },
+  {
+    path: '/lesson',
+    component: () => import('@/views/lesson/index.vue'),
+    meta: {
+      title: '我的课程',
+      auth: true
+    }
+  },
+  {
+    path: '/order',
+    component: () => import('@/views/order/index.vue'),
+    meta: {
+      title: '我的订单',
+      auth: true
+    }
+  },
+  {
+    path: '/integral',
+    component: () => import('@/views/integral/index.vue'),
+    meta: {
+      title: '积分商城',
       auth: true
     }
   },
@@ -95,7 +157,7 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const meta = to.meta as AppRouteMetaConfig
-  document.title = meta.title ? `慕课网-${meta.title}` : '慕课网-程序员的梦工厂'
+  document.title = meta.title ? `课程视频网-${meta.title}` : '课程视频网-小初高课程视频配套课件教案逐字稿专业分享平台'
   const token = getToken()
   if (token) {
     const userInfo = getUserInfo()

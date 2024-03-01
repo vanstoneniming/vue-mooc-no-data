@@ -9,10 +9,8 @@
       <div class="header-brand">
         <img
           src="@/assets/images/common/brand.png"
-          width="136"
-          height="72"
-          alt="慕课网"
-          title="慕课网"
+          alt="课程视频"
+          title="课程视频"
           @click="navigate"
         >
       </div>
@@ -51,6 +49,10 @@ export default defineComponent({
       cursor: pointer;
       @include respond-to {
         margin: 0 10px;
+      }
+      img {
+        width: 220px;
+        margin-top: 8px;
       }
     }
   }

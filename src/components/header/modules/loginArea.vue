@@ -1,17 +1,13 @@
 <template>
   <div class="login-area">
     <ul>
-      <li class="login-area-item app" title="下载APP">
-        <span>下载APP</span>
-        <AppDownload class="app-download" />
-      </li>
-      <li class="login-area-item cart" title="购物车">
+      <li class="login-area-item cart" title="购物车" @click="goToCart()">
         <span>
           <i class="iconfont icon-cart"></i>购物车
         </span>
       </li>
       <template v-if="userInfo.uid">
-        <li class="login-area-item bell">
+<!--        <li class="login-area-item bell">
           <el-badge
             type="danger"
             :value="userInfo.notice"
@@ -21,8 +17,8 @@
               <span class="iconfont icon-notice"></span>
             </router-link>
           </el-badge>
-        </li>
-        <li class="login-area-item lesson">
+        </li>-->
+        <li class="login-area-item lesson" @click="myLesson()">
           <span>我的课程</span>
         </li>
         <li class="login-area-item user">
@@ -42,12 +38,10 @@ import { UserInfo } from '@/types'
 import { computed, defineAsyncComponent, defineComponent, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
-const AppDownload = defineAsyncComponent(() => import('./appDownload.vue'))
 const UserCard = defineAsyncComponent(() => import('./userCard.vue'))
 export default defineComponent({
   name: 'HeaderLoginArea',
   components: {
-    AppDownload,
     UserCard
   },
   setup () {
@@ -55,10 +49,16 @@ export default defineComponent({
     const store = useStore()
     const isBellHovering = ref(false)
     const userInfo = computed<UserInfo>(() => store.getters.userInfo)
+    const goToCart = () => {
+      router.push('/cart')
+    }
+    const myLesson = () => {
+      router.push('/lesson')
+    }
     const handleLoginClick = (type: number) => {
       router.push({ path: '/login', query: { type } })
     }
-    return { isBellHovering, userInfo, handleLoginClick }
+    return { isBellHovering, userInfo, handleLoginClick, goToCart, myLesson }
   }
 })
 </script>
@@ -110,7 +110,7 @@ export default defineComponent({
         }
       }
       &.bell, &.lesson, &.user {
-        width: 60px;
+        width: 100px;
         text-align: center;
         cursor: pointer;
       }

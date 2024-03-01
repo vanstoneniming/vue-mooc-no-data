@@ -14,6 +14,11 @@ export interface SidebarItemConfig extends NavConfig {
   icon: string;
 }
 
+export interface CeciConfig {
+  id: number;
+  title: string;
+}
+
 // login or register参数
 export interface LoginParams {
   account: string;

@@ -13,8 +13,8 @@
 
     <!-- hot tags -->
     <ul v-show="!isFocus && !keyword" class="search-hot-tags">
-      <li class="tag-item">Vue</li>
-      <li class="tag-item">Java</li>
+      <li class="tag-item">精品课</li>
+      <li class="tag-item">云平台</li>
     </ul>
 
     <!-- icon -->
@@ -56,7 +56,7 @@ export default defineComponent({
       background-color:#E9E9E9;
       input {
         padding: 0 40px 0 12px;
-        width: 280px;
+        width: 380px;
         height: 24px;
         line-height: 24px;
         border: none;
@@ -69,7 +69,7 @@ export default defineComponent({
           color: $placeholder-text;
         }
         @include respond-to {
-          width: 260px;
+          width: 360px;
           padding: 0 8px;
         }
       }

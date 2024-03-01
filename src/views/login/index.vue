@@ -3,7 +3,7 @@
     <!-- logo -->
     <router-link to="/" custom v-slot="{navigate}">
       <div class="login-logo" @click="navigate">
-        <img src="@/assets/images/login/signlogo.png" width="384" height="40" alt="">
+        <img src="@/assets/images/login/signlogo.png" width="277" height="71" alt="">
       </div>
     </router-link>
 

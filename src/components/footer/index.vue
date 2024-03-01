@@ -18,21 +18,10 @@
 
       <!-- 底部版权 -->
       <p class="footer-copyright">
-        <span>© 2020 imooc.com  京ICP备 12003892号-11 </span>
-        <span>京公网安备11010802030151号</span>
+        <span>© 2024 ke.video 京ICP备05035325号-7 </span>
+        <span>微信公众号：明德经</span>
+        <span>淘宝店铺：https://obolai.taobao.com</span>
       </p>
-
-      <!-- 底部公众号、微博 -->
-      <div class="footer-sns">
-        <div class="footer-sns-item">
-          <span class="iconfont icon-wechat"></span>
-          <p>官方微信</p>
-        </div>
-        <div class="footer-sns-item">
-          <span class="iconfont icon-weibo"></span>
-          <p>官方微博</p>
-        </div>
-      </div>
     </div>
   </div>
 </template>
