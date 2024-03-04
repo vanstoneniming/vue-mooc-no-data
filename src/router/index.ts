@@ -1,5 +1,5 @@
 import { App } from 'vue'
-import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
+import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 import { scrollBehavior } from './scrollBehavior'
 import store from '@/store/index'
 import { AppRouteRecordRaw, AppRouteMetaConfig } from '@/types'
@@ -34,8 +34,13 @@ const basicRoutes: AppRouteRecordRaw[] = [
   },
   {
     path: '/res',
-    name: 'Res',
+    name: 'Resource',
     component: () => import('@/views/res/index.vue')
+  },
+  {
+    path: '/res/:id',
+    name: 'ResourceDetail',
+    component: () => import('@/views/res/detail.vue')
   },
   {
     path: '/course',
@@ -43,9 +48,9 @@ const basicRoutes: AppRouteRecordRaw[] = [
     component: () => import('@/views/course/index.vue')
   },
   {
-    path: '/reslink',
-    name: 'Reslink',
-    component: () => import('@/views/reslink/index.vue')
+    path: '/course/:id',
+    name: 'CourseDetail',
+    component: () => import('@/views/course/detail.vue')
   },
   {
     path: '/login',
@@ -150,19 +155,19 @@ const routes = [
 ] as RouteRecordRaw[]
 
 const router = createRouter({
-  history: createWebHashHistory(),
+  history: createWebHistory(),
   scrollBehavior: scrollBehavior,
   routes: routes
 })
 
 router.beforeEach((to, from, next) => {
   const meta = to.meta as AppRouteMetaConfig
-  document.title = meta.title ? `课程视频网-${meta.title}` : '课程视频网-小初高课程视频配套课件教案逐字稿专业分享平台'
+  document.title = meta.title ? `课·视频-${meta.title}` : '课·视频-小初高视频课件教案逐字稿'
   const token = getToken()
   if (token) {
     const userInfo = getUserInfo()
-    if (!userInfo.uid) {
-      store.dispatch('user/getInfo', token)
+    if (!userInfo.id) {
+      store.dispatch('user/getInfo', token).then(r => console.log('Token 无效', r))
     }
   }
   if (meta && meta.auth) {

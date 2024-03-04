@@ -3,11 +3,21 @@ export interface MoocResponseConfig<T> {
   msg?: string;
   data: T;
 }
+export interface ResponseConfig<T> {
+  code: number;
+  message: string;
+  result: T;
+}
 
 export interface MoocCeciResponseConfig<T> {
   code: number;
   msg?: string;
-  result: { items: T };
+  result: { items: T; total: number};
+}
+export interface MoocCourseResponseConfig<T> {
+  code: number;
+  msg?: string;
+  result: { items: T; total: number } ;
 }
 
 export interface MoocListResponseConfig<T> {

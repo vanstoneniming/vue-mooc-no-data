@@ -3,7 +3,7 @@ import * as types from '../mutation-types'
 import { LoginParams, UserState } from '@/types/index'
 import { ActionContext } from 'vuex'
 import { userLogin, userRegister, getUserInfo } from '@/api/user'
-import { ERR_OK } from '@/api/config'
+import { ERR_OK, ERR_SUCCESS } from '@/api/config'
 import { getToken, setToken, removeToken, removeUserInfo, setUserInfo, getUserInfo as getUserCacheInfo } from '@/utils/cache'
 
 const state = {
@@ -23,12 +23,13 @@ const mutations = {
 const actions = {
   async login ({ commit }: ActionContext<UserState, any>, params: LoginParams) {
     try {
-      const { code, data, msg } = await userLogin(params)
-      if (code === ERR_OK) {
-        commit(`${types.SET_TOKEN}`, setToken(data))
+      const { code, result, message } = await userLogin(params)
+      if (code === ERR_SUCCESS) {
+        console.log(result)
+        commit(`${types.SET_TOKEN}`, setToken(result.token))
         return Promise.resolve(true)
       } else {
-        throw new Error(msg)
+        throw new Error(message)
       }
     } catch (e) {
       return Promise.reject(e)
@@ -47,13 +48,13 @@ const actions = {
       return Promise.reject(e)
     }
   },
-  async getInfo ({ commit }: ActionContext<UserState, any>, token: string) {
+  async getInfo ({ commit }: ActionContext<UserState, any>) {
     try {
-      const { code, data, msg } = await getUserInfo(token)
-      if (code === ERR_OK) {
-        commit(`${types.SET_USER_INFO}`, setUserInfo(data))
+      const { code, result, message } = await getUserInfo()
+      if (code === ERR_SUCCESS) {
+        commit(`${types.SET_USER_INFO}`, setUserInfo(result))
       } else {
-        throw new Error(msg)
+        throw new Error(message)
       }
     } catch (e) {
       return Promise.reject(e)

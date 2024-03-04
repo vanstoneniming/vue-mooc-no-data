@@ -1,10 +1,10 @@
 <template>
   <div class="login-form">
     <el-form ref="formRef" :model="formData" :rules="rules">
-      <el-form-item prop="account">
+      <el-form-item prop="username">
         <el-input
-          v-model="formData.account"
-          placeholder="请输入手机号/邮箱"
+          v-model="formData.username"
+          placeholder="请输入手机号"
           clearable
         />
       </el-form-item>
@@ -43,26 +43,28 @@
 import { defineComponent, ref, unref, reactive, computed } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
-import { useMessage } from '@/hooks/core/useMessage'
+// import { useMessage } from '@/hooks/core/useMessage'
+// import { ElMessage } from 'element-plus'
+
 export default defineComponent({
   name: 'LoginForm',
   props: {
     type: Number
   },
   setup (props) {
-    const Message = useMessage()
+    // const Message = useMessage()
     const store = useStore()
     const router = useRouter()
     const formRef = ref<any>(null)
     const formData = reactive({
-      account: '',
+      username: '',
       password: '',
       isLoading: false,
       type: props.type
     })
     const rules = reactive({
-      account: [
-        { required: true, message: '手机号/邮箱不能为空', trigger: 'blur' }
+      username: [
+        { required: true, message: '手机号不能为空', trigger: 'blur' }
       ],
       password: [
         { required: true, message: '密码不能为空', trigger: 'blur' }
@@ -86,25 +88,26 @@ export default defineComponent({
         formData.isLoading = true
         try {
           const loginParams = {
-            account: formData.account,
+            username: formData.username,
             password: formData.password
           }
           const dispatchAction = formData.type === 0 ? 'user/login' : 'user/register'
           const messageType = formData.type === 0 ? '登录' : '注册'
           const submitResult = await store.dispatch(dispatchAction, loginParams)
           if (submitResult) {
-            Message({
-              type: 'success',
-              message: `${messageType}成功`,
-              duration: 1500,
-              onClose: () => {
-                router.push('/')
-              }
-            })
+            // ElMessage({
+            //   type: 'success',
+            //   message: `${messageType}成功`,
+            //   duration: 1500,
+            //   onClose: () => {
+            //     router.push('/')
+            //   }
+            // })
+            router.push('/')
           }
         } catch (e) {
           formData.password = ''
-          Message.error(e.message || '登录失败')
+          // ElMessage.error(e.message || '登录失败')
         } finally {
           formData.isLoading = false
         }

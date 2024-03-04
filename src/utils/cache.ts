@@ -1,7 +1,7 @@
 import { UserInfo } from '@/types'
 import storage from 'good-storage'
-const tokenPrefix = 'mooc_token'
-const userInfoPrefix = 'mooc_user_info'
+const tokenPrefix = 'token'
+const userInfoPrefix = 'user_info'
 
 // token cache
 export function setToken (token: string): string {

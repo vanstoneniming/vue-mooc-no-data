@@ -6,7 +6,7 @@
           <i class="iconfont icon-cart"></i>购物车
         </span>
       </li>
-      <template v-if="userInfo.uid">
+      <template v-if="userInfo.id">
 <!--        <li class="login-area-item bell">
           <el-badge
             type="danger"
@@ -22,7 +22,7 @@
           <span>我的课程</span>
         </li>
         <li class="login-area-item user">
-          <img :src="userInfo.avatar" width="32" height="32" alt="头像">
+          <img :src="avatar" width="32" height="32" alt="头像">
           <UserCard class="user-card" />
         </li>
       </template>
@@ -49,6 +49,7 @@ export default defineComponent({
     const store = useStore()
     const isBellHovering = ref(false)
     const userInfo = computed<UserInfo>(() => store.getters.userInfo)
+    const avatar = 'header.jpg'
     const goToCart = () => {
       router.push('/cart')
     }
@@ -58,7 +59,7 @@ export default defineComponent({
     const handleLoginClick = (type: number) => {
       router.push({ path: '/login', query: { type } })
     }
-    return { isBellHovering, userInfo, handleLoginClick, goToCart, myLesson }
+    return { isBellHovering, userInfo, avatar, handleLoginClick, goToCart, myLesson }
   }
 })
 </script>

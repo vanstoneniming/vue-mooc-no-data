@@ -9,8 +9,8 @@
       <div class="header-brand">
         <img
           src="@/assets/images/common/brand.png"
-          alt="课程视频"
-          title="课程视频"
+          alt="课·视频"
+          title="课·视频"
           @click="navigate"
         >
       </div>

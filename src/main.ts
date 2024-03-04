@@ -1,14 +1,16 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 import router, { setupRouter } from './router'
-import { setupElementPlus } from '@/setup/element-plus'
 import { setupStore } from '@/store'
 import 'normalize.css'
 import '@/assets/styles/index.scss'
+import { Pagination, Form } from 'ant-design-vue'
+import 'ant-design-vue/dist/reset.css'
+import { setupElementPlus } from '@/setup/element-plus'
 
 const app = createApp(App)
+app.use(Pagination, Form)
 
-// setup element-plus
 setupElementPlus(app)
 
 // setup vuex store

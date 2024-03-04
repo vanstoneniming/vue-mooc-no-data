@@ -43,12 +43,12 @@ import { defineComponent, ref, onBeforeMount, computed } from 'vue'
 import { getNoticeList } from '@/api/notice'
 import { ERR_OK } from '@/api/config'
 import { NoticeConfig } from '@/types'
-import { useMessage } from '@/hooks/core/useMessage'
+// import { useMessage } from '@/hooks/core/useMessage'
 const tabList = ['实战', '系统']
 export default defineComponent({
   name: 'Notice',
   setup () {
-    const message = useMessage()
+    // const message = useMessage()
     const activeIndex = ref(0)
     const noticeList = ref<NoticeConfig[]>([])
     const currentCode = computed(() => {
@@ -71,7 +71,7 @@ export default defineComponent({
           isRead: item.code === currentCode.value ? true : item.isRead
         }
       })
-      message.success('标记成功')
+      // message.success('标记成功')
     }
     onBeforeMount(async () => {
       const { code, data } = await getNoticeList<NoticeConfig>()

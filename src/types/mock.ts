@@ -14,20 +14,36 @@ export interface SidebarItemConfig extends NavConfig {
   icon: string;
 }
 
+export interface CourseConfig {
+  id: number;
+  title: string;
+  ceci_name: string;
+  teachers: string;
+  year: string;
+}
 export interface CeciConfig {
+  id: number;
+  title: string;
+}
+export interface ResConfig {
+  id: number;
+  title: string;
+}
+
+export interface ResLinkConfig {
   id: number;
   title: string;
 }
 
 // login or register参数
 export interface LoginParams {
-  account: string;
+  username: string;
   password: string;
 }
 
 // userInfo类型
 export interface UserInfo {
-  uid: string | number;
+  id: string | number;
   avatar?: string;
   nickname?: string;
   job?: string;

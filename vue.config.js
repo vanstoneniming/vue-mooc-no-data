@@ -9,19 +9,20 @@ module.exports = {
     },
     proxy: {
       '/api': {
-        target: 'http://localhost:4300',
+        target: 'http://localhost:8000',
         changeOrigin: true,
         pathRewrite: {
-          '^/api': ''
+          '^/api': '/api'
         }
       },
       '/auth': {
-        target: 'http://localhost:4300',
+        target: 'http://localhost:8000',
         changeOrigin: true,
         pathRewrite: {
-          '^/auth': ''
+          '^/auth': '/auth+'
         }
       }
     }
-  }
+  },
+  lintOnSave: false
 }

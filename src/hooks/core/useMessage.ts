@@ -1,7 +1,5 @@
-import { IMessage } from 'element-plus/lib/el-message/src/types'
-import { useAppConfig } from './useAppConfig'
+import { ElMessage } from 'element-plus'
 
 export function useMessage () {
-  const Message = useAppConfig().$message as IMessage
-  return Message
+  return ElMessage
 }

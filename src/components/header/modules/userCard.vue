@@ -2,12 +2,12 @@
   <div class="card">
     <!-- information -->
     <div class="card-top">
-      <img :src="userInfo.avatar" alt="图像" width="72" height="72">
+      <img :src="avatar" alt="图像" width="72" height="72">
       <div class="card-top-info">
         <p class="card-top-info-nickname">{{userInfo.nickname}}</p>
         <p class="card-top-info-number">
-          <span>经验{{userInfo.exp}}</span>
-          <span>积分{{userInfo.integral}}</span>
+          <span>经验id{{userInfo.id}}</span>
+          <span>积分id{{userInfo.id}}</span>
         </p>
       </div>
     </div>
@@ -29,8 +29,8 @@
     <div class="card-history">
       <div class="card-history-item">
         <i class="iconfont icon-history"></i>
-        <h3 class="title">{{userInfo.latest.name}}</h3>
-        <p class="section">{{userInfo.latest.section}}</p>
+        <h3 class="title">{{userInfo.name}}</h3>
+        <p class="section">{{userInfo.email}}</p>
         <span class="btn">继续</span>
       </div>
     </div>
@@ -55,8 +55,9 @@ export default defineComponent({
     const userInfo = computed(() => {
       return store.getters.userInfo
     })
+    const avatar = 'header.jpg'
     const handleLogoutClick = () => store.dispatch('user/logout')
-    return { userInfo, linkList, handleLogoutClick }
+    return { userInfo, linkList, avatar, handleLogoutClick }
   }
 })
 </script>

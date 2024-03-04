@@ -6,11 +6,18 @@
       >
         {{ item.id }}
         {{ item.title }}
-        {{ item.update_datetime }}
-        {{ item.status }}
       </li>
     </ul>
   </div>
+  <el-pagination
+    v-model:current-page="currentPage"
+    v-model:page-size="pageSize"
+    :page-sizes="[10, 20, 50, 100]"
+    layout="total, sizes, prev, pager, next, jumper"
+    :total="totalSize"
+    @size-change="handleSizeChange"
+    @current-change="handleCurrentChange"
+  />
 </template>
 
 <script lang="ts">
@@ -25,28 +32,63 @@ export default defineComponent({
   setup () {
     const router = useRouter()
     const ceciList = ref<CeciConfig[]>([])
-    onBeforeMount(async () => {
-      const { code, result: { items: data } } = await getCeci()
-      if (code === ERR_SUCCESS && data) {
-        ceciList.value = data
+    const currentPage = ref<number>(1)
+    const pageSize = ref<number>(10)
+    const totalSize = ref<number>(50)
+
+    async function fetchData () {
+      try {
+        const { code, result: { items: data, total } } = await getCeci({
+          params:
+            {
+              page: currentPage.value, pageSize: pageSize.value
+            }
+        })
+        if (code === ERR_SUCCESS && data) {
+          ceciList.value = data
+          totalSize.value = total
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error)
       }
-    })
+    }
+    const handleSizeChange = () => {
+      fetchData()
+    }
+    function handleCurrentChange () {
+      fetchData()
+    }
+
+    onBeforeMount(() => {
+      fetchData()
+    }
+    )
     const goToDetail = (item: CeciConfig) => {
-      console.log(item.id)
       router.push({ name: 'CeciDetail', params: { id: item.id } })
     }
-    return { goToDetail, ceciList }
+    return {
+      goToDetail,
+      ceciList,
+      currentPage,
+      pageSize,
+      totalSize,
+      handleCurrentChange,
+      handleSizeChange
+    }
   }
 })
 </script>
 
 <style scoped>
-  @import '~@/assets/styles/responsive.scss';
-  .home {
-      margin: 10px 20px;
-  }
-  li {
-    padding: 10px;
-    cursor: grab;
-  }
+@import '~@/assets/styles/responsive.scss';
+
+.home {
+  margin: 10px 20px;
+}
+
+li {
+  padding: 10px;
+  cursor: grab;
+}
+
 </style>
