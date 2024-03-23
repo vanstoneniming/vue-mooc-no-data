@@ -14,6 +14,11 @@ export interface MoocCeciResponseConfig<T> {
   msg?: string;
   result: { items: T; total: number};
 }
+export interface MoocDictCodeResponseConfig<T> {
+  code: number;
+  message?: string;
+  result: T;
+}
 export interface MoocCourseResponseConfig<T> {
   code: number;
   msg?: string;
