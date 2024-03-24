@@ -12,14 +12,17 @@
     "ant-design-vue": "^4.1.2",
     "axios": "^0.21.1",
     "core-js": "^3.6.5",
-    "element-plus": "^2.6.0",
+    "cors-anywhere": "0.4.4",
+    "element-plus": "2.6.1",
     "good-storage": "^1.1.1",
+    "mitt": "^3.0.1",
     "normalize.css": "^8.0.1",
-    "sass-loader": "^10.0.0",
     "throttle-debounce": "^3.0.1",
     "vue": "^3.0.0",
+    "vue-property-decorator": "^9.1.2",
     "vue-router": "^4.0.0-0",
-    "vuex": "^4.0.0-0"
+    "vuex": "^4.0.0-0",
+    "webpack": "4.46.0"
   },
   "devDependencies": {
     "@types/axios": "^0.14.0",
@@ -48,6 +51,7 @@
     "eslint-plugin-vue": "^7.0.0-0",
     "lint-staged": "^9.5.0",
     "sass": "^1.26.5",
+    "sass-loader": "^8.0.2",
     "typescript": "4.3.5",
     "vue-jest": "^5.0.0-0"
   },
