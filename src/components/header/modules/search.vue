@@ -8,29 +8,39 @@
         placeholder="请输入关键词..."
         @focus="isFocus = true"
         @blur="isFocus = false"
+        @keyup.enter="handleKeywordChange"
       >
     </div>
 
-    <!-- hot tags -->
+<!--
+    &lt;!&ndash; hot tags &ndash;&gt;
     <ul v-show="!isFocus && !keyword" class="search-hot-tags">
       <li class="tag-item">精品课</li>
       <li class="tag-item">云平台</li>
     </ul>
+-->
 
     <!-- icon -->
-    <div class="search-icon">
+    <div class="search-icon" @click="handleKeywordChange">
       <i class="iconfont icon-search"></i>
     </div>
   </div>
 </template>
 <script lang="ts">
+
 import { defineComponent, ref } from 'vue'
+import bus from '@/utils/bus'
+
 export default defineComponent({
   name: 'HeaderSearch',
   setup () {
     const keyword = ref('')
     const isFocus = ref(false)
-    return { keyword, isFocus }
+
+    function handleKeywordChange () {
+      bus.emit('keywordChange', keyword.value)
+    }
+    return { keyword, isFocus, handleKeywordChange }
   }
 })
 </script>
