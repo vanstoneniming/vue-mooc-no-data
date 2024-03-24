@@ -43,8 +43,7 @@
 import { defineComponent, ref, unref, reactive, computed } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
-// import { useMessage } from '@/hooks/core/useMessage'
-// import { ElMessage } from 'element-plus'
+import { ElMessage } from 'element-plus/lib'
 
 export default defineComponent({
   name: 'LoginForm',
@@ -95,19 +94,19 @@ export default defineComponent({
           const messageType = formData.type === 0 ? '登录' : '注册'
           const submitResult = await store.dispatch(dispatchAction, loginParams)
           if (submitResult) {
-            // ElMessage({
-            //   type: 'success',
-            //   message: `${messageType}成功`,
-            //   duration: 1500,
-            //   onClose: () => {
-            //     router.push('/')
-            //   }
-            // })
-            router.push('/')
+            ElMessage({
+              type: 'success',
+              message: `${messageType}成功`,
+              duration: 1500,
+              onClose: () => {
+                router.push('/')
+              }
+            })
+            await router.push('/')
           }
         } catch (e) {
           formData.password = ''
-          // ElMessage.error(e.message || '登录失败')
+          ElMessage.error(e.message || '登录失败')
         } finally {
           formData.isLoading = false
         }
