@@ -1,6 +1,6 @@
 import router from '@/router/index'
 import * as types from '../mutation-types'
-import { LoginParams, UserState } from '@/types/index'
+import { LoginParams, UserState } from '@/types'
 import { ActionContext } from 'vuex'
 import { userLogin, userRegister, getUserInfo } from '@/api/user'
 import { ERR_OK, ERR_SUCCESS } from '@/api/config'
