@@ -5,9 +5,9 @@ import {
   FooterLinkConfig,
   MoocCeciResponseConfig,
   MoocCourseResponseConfig,
-  MoocResponseConfig,
+  MoocResponseConfig, MoocDictCodeResponseConfig,
   NavConfig, ResConfig, ResLinkConfig,
-  SidebarItemConfig
+  SidebarItemConfig, DictCodeConfig
 } from '@/types'
 
 // header navigation list
@@ -46,4 +46,12 @@ export function getRes (params: Record<any, any>): Promise<MoocCeciResponseConfi
 }
 export function getResDetail (id: string, params: Record<any, any>): Promise<MoocCeciResponseConfig<ResLinkConfig[]>> {
   return axios.get('/api/generator/resource/' + id, params)
+}
+export function getDictCode (params: Record<any, any>): Promise<MoocDictCodeResponseConfig<DictCodeConfig[]>> {
+  return axios.get('/api/system/dict_item/by/code', params)
+}
+
+export function getImages (thumbs: string, width: number) {
+  return 'http://127.0.0.1:8000/get-image/' +
+          btoa(thumbs + '?x-bce-process=image/format,f_webp/resize,m_lfit,w_' + width) + '/'
 }

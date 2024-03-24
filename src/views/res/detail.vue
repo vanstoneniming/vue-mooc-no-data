@@ -1,24 +1,29 @@
 <template>
   <div class="home">
-    <ul>
-      <li v-for="(item, index) in datalist"
-          :key="index"
-      >
-        {{ item.id }}
-        {{ item.format }}
-        {{ item.resource_name }}
-        {{ item.storages }}
-      </li>
-    </ul>
-    <el-pagination
-      v-model:current-page="currentPage"
-      v-model:page-size="pageSize"
-      :page-sizes="[10, 20, 50, 100]"
-      layout="total, sizes, prev, pager, next, jumper"
-      :total="totalSize"
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
-    />
+    <HeaderShortCut />
+    <div>
+      <ul>
+        <li v-for="(item, index) in datalist"
+            :key="index"
+        >
+          <div class="ceci-item">
+            <storage-detail :data="item"/>
+          </div>
+        </li>
+      </ul>
+    </div>
+    <div class="pagination">
+      <el-pagination
+        v-model:current-page="currentPage"
+        v-model:page-size="pageSize"
+        :hide-on-single-page=true
+        :page-sizes="[12, 24, 36, 48, 60]"
+        :total="totalSize"
+        layout="total, sizes, prev, pager, next, jumper"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+      />
+    </div>
   </div>
 </template>
 
@@ -29,26 +34,37 @@ import { ResConfig } from '@/types'
 import { ERR_SUCCESS } from '@/api/config'
 import { useRoute } from 'vue-router'
 import router from '@/router'
+import StorageDetail from '@/components/resource/detail.vue'
+import bus from '@/utils/bus'
+import { ElMessage, ElPagination } from 'element-plus/lib'
+import HeaderShortCut from '@/components/header/modules/ShortCut.vue'
 
 export default defineComponent({
-  name: 'ceci_detail',
+  name: 'Storage',
+  components: { HeaderShortCut, ElPagination, StorageDetail },
   setup () {
     const route = useRoute()
     const datalist = ref<ResConfig[]>([])
     const id = route.params.id.toString()
     const currentPage = ref<number>(1)
     const pageSize = ref<number>(10)
-    const totalSize = ref<number>(50)
+    const totalSize = ref<number>(0)
+    const searchKeyword = ref('')
 
     async function fetchData () {
       try {
         const { code, result: { items: data, total } } = await getResDetail(id, {
           params:
             {
-              page: currentPage.value, pageSize: pageSize.value
+              // eslint-disable-next-line @typescript-eslint/camelcase
+              page: currentPage.value, pageSize: pageSize.value, resource_name: searchKeyword.value
             }
         })
         if (code === ERR_SUCCESS && data) {
+          data.map((item) => {
+            const storageUrl: string = item.storages
+            item.storages = storageUrl.split('?')[0]
+          })
           datalist.value = data
           totalSize.value = total
         }
@@ -56,6 +72,12 @@ export default defineComponent({
         console.error('Error fetching data:', error)
       }
     }
+
+    bus.on('keywordChange', (event) => {
+      searchKeyword.value = event as string
+      fetchData()
+    })
+
     const handleSizeChange = () => fetchData()
 
     const handleCurrentChange = () => fetchData()
@@ -64,6 +86,7 @@ export default defineComponent({
     const goToDetail = (item: ResConfig) => {
       router.push({ name: 'ResourceDetail', params: { id: item.id } })
     }
+
     return {
       datalist,
       currentPage,
@@ -86,5 +109,9 @@ export default defineComponent({
 
 li {
   padding: 10px;
+}
+
+.el-icon {
+  margin-right: 8px;
 }
 </style>

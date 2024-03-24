@@ -9,8 +9,8 @@ import { getToken, getUserInfo } from '@/utils/cache'
 const basicRoutes: AppRouteRecordRaw[] = [
   {
     path: '/',
-    redirect: '/home',
-    component: () => import('@/views/home/index.vue')
+    redirect: '/home'
+    // component: () => import('@/views/ceci/index.vue')
   },
   {
     path: '/home',
@@ -28,11 +28,6 @@ const basicRoutes: AppRouteRecordRaw[] = [
     component: () => import('@/views/ceci/index.vue')
   },
   {
-    path: '/ceci/:id',
-    name: 'CeciDetail',
-    component: () => import('@/views/ceci/detail.vue')
-  },
-  {
     path: '/res',
     name: 'Resource',
     component: () => import('@/views/res/index.vue')
@@ -46,11 +41,6 @@ const basicRoutes: AppRouteRecordRaw[] = [
     path: '/course',
     name: 'Course',
     component: () => import('@/views/course/index.vue')
-  },
-  {
-    path: '/course/:id',
-    name: 'CourseDetail',
-    component: () => import('@/views/course/detail.vue')
   },
   {
     path: '/login',
