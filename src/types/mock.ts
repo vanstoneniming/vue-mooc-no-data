@@ -24,15 +24,33 @@ export interface CourseConfig {
 export interface CeciConfig {
   id: number;
   title: string;
+  edition: string;
+  grade: string;
+  period: string;
+  platform: string;
+  subject: string;
+  term: string;
 }
 export interface ResConfig {
   id: number;
   title: string;
 }
+export interface DictCodeConfig {
+  id: number;
+  label: string;
+  value: string;
+  sort: number;
+  status: boolean;
+}
+export interface CodeOptionsConfig {
+  label: string;
+  value: string;
+}
 
 export interface ResLinkConfig {
   id: number;
   title: string;
+  storages: string;
 }
 
 // login or register参数
