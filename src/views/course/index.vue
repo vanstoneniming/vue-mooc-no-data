@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <header-short-cut />
+    <header-short-cut/>
     <el-dialog
       v-model="dialogVisible"
       :title="dialogModelTitle"
@@ -16,16 +16,16 @@
     <el-collapse v-model="activeName" accordion>
       <el-collapse-item
         v-for="({ceci, ceci_name, id, original_link, teachers, thumbnails:thumbs, title, year} , index) in dataList"
-        :key="index" :name="index">
+        :key="index">
         <template #title>
           <div class="title">
-            <el-tag>{{ ceci_name }}</el-tag>
-            <el-tag v-if="year">{{ year }}</el-tag>
-            {{ index + 1 }}. {{ title }}
+            {{ courseIndex(index) }}. {{ title }}
             <el-tag v-if="teachers">{{ teachers }}</el-tag>
           </div>
         </template>
         <div>
+          <el-tag v-for="(nameTag, index) in ceciNameList(ceci_name)" :key="index">{{ nameTag }}</el-tag>
+          <el-tag v-if="year">{{ year }}</el-tag>
           <el-button-group>
             <el-button type="success" @click="goToCeci(ceci)">同册课程</el-button>
             <el-button v-if="thumbs" type="success" @click="openOriginal(thumbs)">查看图片</el-button>
@@ -41,14 +41,12 @@
     <el-pagination
       v-model:current-page="currentPage"
       v-model:page-size="pageSize"
+      :hide-on-single-page=true
+      :page-sizes="[12, 24, 36, 48, 60]"
       :total="totalSize"
+      layout="total, sizes, prev, pager, next, jumper"
       next-text="下一页"
       prev-text="上一页"
-      :page-sizes="[12, 24, 36, 48, 60]"
-      :hide-on-single-page=true
-      layout="total, sizes, prev, pager, next, jumper"
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
     />
   </div>
 </template>
@@ -65,16 +63,17 @@
   line-height: 1.5; /* 调整标签的行高 */
 }
 
-.el-collapse{
+.el-collapse {
   margin: 0 20px;
 }
+
 button div.title {
   font-size: 18px;
   font-weight: bold;
   color: darkslategray;
 }
 
-button.is-active div.title{
+button.is-active div.title {
   color: #2688E8;
 }
 
@@ -115,15 +114,13 @@ import { getCourse, getImages } from '@/api/common'
 import { CourseConfig } from '@/types'
 import { ERR_SUCCESS } from '@/api/config'
 import { useRoute, useRouter } from 'vue-router'
-import CourseDetail from '@/components/course/index.vue'
 import bus from '@/utils/bus'
 import { ElPagination } from 'element-plus/lib/components'
 import HeaderShortCut from '@/components/header/modules/ShortCut.vue'
 
 export default defineComponent({
   name: 'Course',
-  // eslint-disable-next-line vue/no-unused-components
-  components: { HeaderShortCut, ElPagination, CourseDetail },
+  components: { HeaderShortCut, ElPagination },
 
   setup () {
     const route = useRoute()
@@ -175,14 +172,17 @@ export default defineComponent({
       router.push({ name: 'Course', query: { ceci: id } })
     }
 
-    const handleSizeChange = () => fetchData()
-
-    const handleCurrentChange = () => fetchData()
-
     const titleWithAuthor = (title: string, teachers: string) => {
       return teachers !== '' ? `${title}-${teachers}` : title
     }
 
+    const courseIndex = (index: number) => {
+      return index + 1 + (pageSize.value * (currentPage.value - 1))
+    }
+
+    const ceciNameList = (ceci: string) => {
+      return ceci.split('_')
+    }
     const thumbnails = (title: string, thumbs: any, width: number) => {
       if (thumbs === null) {
         thumbsImage.value = ''
@@ -197,7 +197,7 @@ export default defineComponent({
     onBeforeMount(() => fetchData())
 
     watch(
-      () => route,
+      [searchKeyword, currentPage, pageSize, route],
       () => {
         fetchData()
       },
@@ -215,12 +215,12 @@ export default defineComponent({
       dialogModelWidth,
       dialogModelTitle,
       openOriginal,
+      ceciNameList,
       thumbnails,
       goToCeci,
       goToDetail,
-      titleWithAuthor,
-      handleCurrentChange,
-      handleSizeChange
+      courseIndex,
+      titleWithAuthor
     }
   }
 })
