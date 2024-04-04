@@ -1,5 +1,5 @@
 <template>
-  <el-card style="width: 400px;">
+  <el-card style="width: 320px;">
     <template #header>
       <div class="card-header">
         <span>{{ data.title }}</span>
@@ -18,7 +18,6 @@
 
 <script>
 import { useRouter } from 'vue-router'
-import { computed } from 'vue'
 
 export default {
   name: 'CeciDetail',
@@ -60,7 +59,7 @@ export default {
 </script>
 <style scoped>
 .card-header {
-  font-size: 24px;
+  font-size: 20px;
   font-weight: bold;
 }
 

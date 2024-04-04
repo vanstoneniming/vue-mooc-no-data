@@ -1,11 +1,11 @@
 <template>
   <div class="login-area">
     <ul>
-      <li class="login-area-item cart" title="购物车" @click="goToCart()">
+<!--      <li class="login-area-item cart" title="购物车" @click="goToCart()">
         <span>
           <i class="iconfont icon-cart"></i>购物车
         </span>
-      </li>
+      </li>-->
       <template v-if="userInfo.id">
 <!--        <li class="login-area-item bell">
           <el-badge
@@ -17,10 +17,10 @@
               <span class="iconfont icon-notice"></span>
             </router-link>
           </el-badge>
-        </li>-->
+        </li>
         <li class="login-area-item lesson" @click="myLesson()">
           <span>我的课程</span>
-        </li>
+        </li>-->
         <li class="login-area-item user">
           <img :src="avatar" width="32" height="32" alt="头像">
           <UserCard class="user-card" />

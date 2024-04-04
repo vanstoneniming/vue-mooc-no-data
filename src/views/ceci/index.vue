@@ -14,12 +14,18 @@
       </li>
     </ul>
   </div>
-
-  <CustomPagination
-      :total-items="totalSize"
-      @update:currentPage="onPageChange"
-      @update:pageSize="onPageSizeChange"
-    ></CustomPagination>
+  <div class="pagination">
+    <el-pagination
+      v-model:current-page="currentPage"
+      v-model:page-size="pageSize"
+      :total="totalSize"
+      next-text="下一页"
+      prev-text="上一页"
+      :page-sizes="[12, 24, 36, 48, 60]"
+      :hide-on-single-page=true
+      layout="total, sizes, prev, pager, next, jumper"
+    />
+  </div>
 </template>
 
 <style scoped>
@@ -62,11 +68,11 @@ import { ERR_SUCCESS } from '@/api/config'
 import CeciDetail from '@/components/ceci/index.vue'
 import bus from '@/utils/bus'
 import DictCodeSelect from '@/components/ceci/DictCodeSelect.vue'
-import CustomPagination from '@/components/ceci/CustomPagination.vue'
+import { ElPagination } from 'element-plus/lib/components'
 
 export default defineComponent({
   name: 'Ceci',
-  components: { CustomPagination, DictCodeSelect, CeciDetail },
+  components: { ElPagination, DictCodeSelect, CeciDetail },
   setup () {
     const dataList = ref<CeciConfig[]>([])
     const currentPage = ref<number>(1)
@@ -144,14 +150,6 @@ export default defineComponent({
       }
     }
 
-    function onPageChange (newPage: number) {
-      currentPage.value = newPage
-    }
-
-    function onPageSizeChange (newSize: number) {
-      pageSize.value = newSize
-    }
-
     onBeforeMount(async () => {
       platformOptions.value = await fetchDictCode('platform')
       subjectOptions.value = await fetchDictCode('subject')
@@ -183,9 +181,7 @@ export default defineComponent({
       grade,
       gradeOptions,
       term,
-      termOptions,
-      onPageChange,
-      onPageSizeChange
+      termOptions
     }
   }
 })

@@ -19,8 +19,6 @@
       <!-- 底部版权 -->
       <p class="footer-copyright">
         <span>© 2024 ke.video 京ICP备05035325号-7 </span>
-        <span>微信公众号：明德经</span>
-        <span>淘宝店铺：https://obolai.taobao.com</span>
       </p>
     </div>
   </div>
@@ -49,7 +47,7 @@ export default defineComponent({
   @import '~@/assets/styles/mixin.scss';
   .footer {
     &-center {
-      padding: 36px 0;
+      padding: 5px 10px;
       position: relative;
       @include mooc-center();
     }

@@ -79,7 +79,7 @@ export default defineComponent({
           color: $placeholder-text;
         }
         @include respond-to {
-          width: 360px;
+          width: 200px;
           padding: 0 8px;
         }
       }
