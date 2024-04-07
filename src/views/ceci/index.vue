@@ -6,6 +6,9 @@
     <dict-code-select v-model="period" :options="periodOptions" placeholder="请选择学段"></dict-code-select>
     <dict-code-select v-model="grade" :options="gradeOptions" placeholder="请选择年级"></dict-code-select>
     <dict-code-select v-model="term" :options="termOptions" placeholder="请选择学期"></dict-code-select>
+    <div v-show="ceciList.length==0">
+        <el-empty description="暂无数据" :image-size="300"/>
+    </div>
     <ul class="ceci-list">
       <li v-for="(item, index) in ceciList" :key="index">
         <div class="ceci-item">
@@ -58,6 +61,11 @@
   height: 100%;
 }
 
+.pagination {
+  margin: 10px;
+  display: flex;
+  justify-content: center;
+}
 </style>
 
 <script lang="ts">

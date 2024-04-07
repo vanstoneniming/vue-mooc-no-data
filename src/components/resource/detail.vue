@@ -16,11 +16,10 @@
               <el-button type="danger">403 Forbidden</el-button>
             </el-tooltip>
             </div>
-
-            <el-link @click="openOriginal(item)">{{ shortenText(item, 80) }}</el-link>
+            <el-link @click="openOriginal(item)">{{ shortenText(item, 50) }}</el-link>
             <div class="right-aligned-buttons">
-              <el-button @click="copyLink(item, 'json')">链接字典</el-button>
-              <el-button @click="copyLink(item, 'text')">链接文本</el-button>
+              <el-button @click="copyLink(item, 'json')" size="small">链接字典</el-button>
+              <el-button @click="copyLink(item, 'text')" size="small">链接文本</el-button>
             </div>
           </div>
         </li>
@@ -119,9 +118,8 @@ export default {
 }
 
 .el-link {
-  font-size: 18px;
+  font-size: 14px;
   color: deepskyblue;
-  line-height: 1.5;
 }
 
 .el-button {

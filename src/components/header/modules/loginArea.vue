@@ -33,33 +33,31 @@
     </ul>
   </div>
 </template>
-<script lang="ts">
+<script lang="ts" setup>
 import { UserInfo } from '@/types'
 import { computed, defineAsyncComponent, defineComponent, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
+import avatar from '@/assets/images/header.jpg'
+
 const UserCard = defineAsyncComponent(() => import('./userCard.vue'))
-export default defineComponent({
+const router = useRouter()
+const store = useStore()
+const isBellHovering = ref(false)
+const userInfo = computed<UserInfo>(() => store.getters.userInfo)
+const goToCart = () => {
+  router.push('/cart')
+}
+const myLesson = () => {
+  router.push('/lesson')
+}
+const handleLoginClick = (type: number) => {
+  router.push({ path: '/login', query: { type } })
+}
+defineComponent({
   name: 'HeaderLoginArea',
   components: {
     UserCard
-  },
-  setup () {
-    const router = useRouter()
-    const store = useStore()
-    const isBellHovering = ref(false)
-    const userInfo = computed<UserInfo>(() => store.getters.userInfo)
-    const avatar = 'header.jpg'
-    const goToCart = () => {
-      router.push('/cart')
-    }
-    const myLesson = () => {
-      router.push('/lesson')
-    }
-    const handleLoginClick = (type: number) => {
-      router.push({ path: '/login', query: { type } })
-    }
-    return { isBellHovering, userInfo, avatar, handleLoginClick, goToCart, myLesson }
   }
 })
 </script>

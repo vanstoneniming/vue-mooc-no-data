@@ -2,18 +2,25 @@ import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios'
 import { ElMessage } from 'element-plus/lib'
 import { getToken } from './cache'
 import { baseURL } from '@/api/config'
+import { config } from '@vue/test-utils'
+import router from '@/router'
 const instance = axios.create({
   timeout: 10000,
-  baseURL: baseURL
+  baseURL
 })
 
 // 请求拦截
 instance.interceptors.request.use((config: AxiosRequestConfig) => {
   // add token TDD
   const { url } = config
-  if (url?.indexOf('/login') === -1) {
+  const urlsToExclude = ['/login',
+    '/api/header', '/api/footer', '/api/sidebar',
+    '/api/generator/course', '/api/generator/ceci',
+    '/api/system/dict_item/by/code']
+  if (!urlsToExclude.some(excludedUrl => url === excludedUrl)) {
     config.headers.Authorization = getToken()
   }
+
   return config
 })
 
@@ -28,8 +35,12 @@ instance.interceptors.response.use(
     }
   },
   (err: AxiosError) => {
-    console.log(err)
-    ElMessage.error(err.message || '接口请求异常')
+    if (err.response?.status === 401) {
+      router.push('/login').then(() => ElMessage.info('身份认证失效，需要登录！')
+      )
+    } else {
+      ElMessage.error(err.message || '接口请求异常')
+    }
   }
 )
 

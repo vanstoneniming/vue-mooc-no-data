@@ -10,7 +10,7 @@
     <LayoutFooter v-show="!meta.hideFooter" class="layout-footer">
       <MoocFooter />
     </LayoutFooter>
-    <MoocSidebar v-show=false />
+    <MoocSidebar v-show="!meta.hideSidebar" />
   </div>
 </template>
 <script lang="ts">

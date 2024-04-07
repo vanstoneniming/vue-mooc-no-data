@@ -1,12 +1,13 @@
 <template>
   <el-card shadow="always">
     <div class="card-header">
-      <el-tag size="large">{{ data.course_name }}</el-tag>
-      <el-tag>{{ updateDate }}</el-tag>
+      <el-divider content-position="center">{{ data.course_name }}</el-divider>
+      <el-tag round size="large">{{ id }}</el-tag>
       <span>{{ data.title }}</span>
+      <el-tag type="info">{{ updateDate }}</el-tag>
       <el-tag v-if="data.teachers">{{ data.teachers }}</el-tag>
       <el-button-group>
-        <el-button type="success" @click="goToCourse(data.course)">同课资源</el-button>
+        <el-button v-if="sameGroupVisible" type="success" @click="goToCourse(data.course)">同课资源</el-button>
         <el-button type="success" @click="goToDetail(data.id)">资源详情</el-button>
       </el-button-group>
     </div>
@@ -22,6 +23,14 @@ export default {
   props: {
     data: {
       type: Object,
+      required: true
+    },
+    id: {
+      type: Number,
+      required: true
+    },
+    sameGroupVisible: {
+      type: Boolean,
       required: true
     }
   },
@@ -52,7 +61,7 @@ export default {
 }
 
 .el-button-group {
-  float:right;
+  float: right;
   margin-bottom: 10px;
 }
 

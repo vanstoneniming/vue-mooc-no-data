@@ -6,12 +6,11 @@
       <div class="card-top-info">
         <p class="card-top-info-nickname">{{userInfo.nickname}}</p>
         <p class="card-top-info-number">
-          <span>经验id{{userInfo.id}}</span>
-          <span>积分id{{userInfo.id}}</span>
+          <span>经验：{{userInfo.id}}</span>
+          <span>积分：{{userInfo.id}}</span>
         </p>
       </div>
     </div>
-
     <!-- link -->
     <ul class="card-links">
       <li
@@ -24,7 +23,6 @@
         </router-link>
       </li>
     </ul>
-
     <!-- history -->
     <div class="card-history">
       <div class="card-history-item">
@@ -34,32 +32,29 @@
         <span class="btn">继续</span>
       </div>
     </div>
-
-    <!-- exit -->
     <p class="card-exit" @click="handleLogoutClick">安全退出</p>
   </div>
 </template>
-<script>
+<script setup lang="ts">
 import { defineComponent, computed } from 'vue'
 import { useStore } from 'vuex'
+import avatar from '@/assets/images/header.jpg'
+
 const linkList = [
   { icon: 'icon-lesson', title: '我的课程', url: '/lesson' },
   { icon: 'icon-order', title: '订单中心', url: '/order' },
   { icon: 'icon-integral', title: '积分商场', url: '/integral' },
   { icon: 'icon-setting', title: '个人设置', url: '/user' }
 ]
-export default defineComponent({
-  name: 'UserCard',
-  setup () {
-    const store = useStore()
-    const userInfo = computed(() => {
-      return store.getters.userInfo
-    })
-    const avatar = 'header.jpg'
-    const handleLogoutClick = () => store.dispatch('user/logout')
-    return { userInfo, linkList, avatar, handleLogoutClick }
-  }
+const store = useStore()
+const userInfo = computed(() => {
+  return store.getters.userInfo
 })
+const handleLogoutClick = () => store.dispatch('user/logout')
+defineComponent({
+  name: 'UserCard'
+})
+
 </script>
 <style lang="scss" scoped>
   @import '~@/assets/styles/variables.scss';

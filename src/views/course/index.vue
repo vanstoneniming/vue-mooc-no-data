@@ -1,6 +1,5 @@
 <template>
   <div class="home">
-    <header-short-cut/>
     <el-dialog
       v-model="dialogVisible"
       :title="dialogModelTitle"
@@ -13,29 +12,32 @@
         style="width: 100%; height: 100%;"
       />
     </el-dialog>
+    <div v-show="dataList.length==0">
+        <el-empty description="暂无数据" :image-size="300"/>
+    </div>
     <el-collapse v-model="activeName" accordion>
       <el-collapse-item
         v-for="({ceci, ceci_name, id, original_link, teachers, thumbnails:thumbs, title, year} , index) in dataList"
         :key="index">
         <template #title>
           <div class="title">
-            {{ courseIndex(index) }}. {{ title }}
-            <el-tag v-if="teachers">{{ teachers }}</el-tag>
+            <el-tag round>{{ courseIndex(index) }}</el-tag> {{ title }}
+            <el-tag type="success" v-if="teachers">{{ teachers }}</el-tag>
           </div>
         </template>
         <div>
-          <el-tag v-for="(nameTag, index) in ceciNameList(ceci_name)" :key="index">{{ nameTag }}</el-tag>
-          <el-tag v-if="year">{{ year }}</el-tag>
+          <el-tag v-for="(nameTag, index) in ceciNameList(ceci_name)" :key="index" type="info">{{ nameTag }}</el-tag>
+          <el-tag v-if="year" type="info">{{ year }}</el-tag>
           <el-button-group>
-            <el-button type="success" @click="goToCeci(ceci)">同册课程</el-button>
-            <el-button v-if="thumbs" type="success" @click="openOriginal(thumbs)">查看图片</el-button>
+            <el-button v-if="sameGroupVisible" type="success" @click="goToCeci(ceci)">同册课程</el-button>
+            <el-button v-if="thumbs" type="success" @click="openOriginal(thumbs)">新页大图</el-button>
+            <el-button v-if="thumbs" type="success" @click="thumbnails(title,thumbs,500)">弹层略图</el-button>
             <el-button v-if="original_link" type="success" @click="openOriginal(original_link)">原始链接</el-button>
             <el-button type="success" @click="goToDetail(id)">配套资源</el-button>
           </el-button-group>
         </div>
       </el-collapse-item>
     </el-collapse>
-
   </div>
   <div class="pagination">
     <el-pagination
@@ -64,7 +66,7 @@
 }
 
 .el-collapse {
-  margin: 0 20px;
+  margin: 0 50px;
 }
 
 button div.title {
@@ -116,11 +118,10 @@ import { ERR_SUCCESS } from '@/api/config'
 import { useRoute, useRouter } from 'vue-router'
 import bus from '@/utils/bus'
 import { ElPagination } from 'element-plus/lib/components'
-import HeaderShortCut from '@/components/header/modules/ShortCut.vue'
 
 export default defineComponent({
   name: 'Course',
-  components: { HeaderShortCut, ElPagination },
+  components: { ElPagination },
 
   setup () {
     const route = useRoute()
@@ -135,15 +136,18 @@ export default defineComponent({
     const dialogVisible = ref(false)
     const dialogModelWidth = ref(380)
     const dialogModelTitle = ref('图片预览')
+    const sameGroupVisible = ref(true)
 
     async function fetchData () {
+      const queryCeci = router.currentRoute.value.query.ceci
+      sameGroupVisible.value = !queryCeci
       try {
         const { code, result: { items: data, total } } = await getCourse({
           params: {
             page: currentPage.value,
             pageSize: pageSize.value,
             title: searchKeyword.value,
-            ceci: router.currentRoute.value.query.ceci
+            ceci: queryCeci
           }
         })
         if (code === ERR_SUCCESS && data) {
@@ -212,6 +216,7 @@ export default defineComponent({
       activeName,
       thumbsImage,
       dialogVisible,
+      sameGroupVisible,
       dialogModelWidth,
       dialogModelTitle,
       openOriginal,

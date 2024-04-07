@@ -1,5 +1,5 @@
 <template>
-  <div class="header">
+  <div class="header" style="display: none">
     <!-- brand -->
     <router-link
       to="/"
@@ -20,18 +20,47 @@
     <HeaderNavigation />
 
     <!-- search -->
-    <HeaderSearch />
 
     <!-- login area -->
-    <HeaderLoginArea />
   </div>
+<div class="header">
+  <el-menu
+    :default-active="activeIndex"
+    class="el-menu-demo"
+    mode="horizontal"
+    :ellipsis="false"
+    @select="handleSelect"
+  >
+    <el-menu-item index="/home">
+      <img
+        style="width: 180px"
+        src="@/assets/images/common/brand.png"
+        alt="Element logo"
+      />
+    </el-menu-item>
+    <div class="flex-grow" />
+    <HeaderSearch />
+    <el-menu-item index="/ceci">册次</el-menu-item>
+    <el-menu-item index="/course">课程</el-menu-item>
+    <el-menu-item index="/res">资源</el-menu-item>
+    <HeaderLoginArea />
+
+  </el-menu>
+</div>
+
 </template>
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script lang="ts" setup>
+import { defineComponent, ref } from 'vue'
 import HeaderNavigation from './modules/navigation.vue'
 import HeaderSearch from './modules/search.vue'
 import HeaderLoginArea from './modules/loginArea.vue'
-export default defineComponent({
+import { useRouter } from 'vue-router'
+const activeIndex = ref('1')
+const router = useRouter()
+const handleSelect = (key: string) => {
+  router.push(key)
+}
+defineComponent({
   name: 'Header',
   components: {
     HeaderNavigation,
@@ -56,4 +85,7 @@ export default defineComponent({
       }
     }
   }
+  .flex-grow {
+  flex-grow: 1;
+}
 </style>

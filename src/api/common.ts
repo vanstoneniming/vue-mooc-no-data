@@ -52,6 +52,6 @@ export function getDictCode (params: Record<any, any>): Promise<MoocDictCodeResp
 }
 
 export function getImages (thumbs: string, width: number) {
-  return 'http://127.0.0.1:8000/get-image/' +
+  return '//api.ke.video/get-image/' +
           btoa(thumbs + '?x-bce-process=image/format,f_webp/resize,m_lfit,w_' + width) + '/'
 }

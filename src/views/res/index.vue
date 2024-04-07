@@ -1,10 +1,12 @@
 <template>
   <div class="home">
-    <header-short-cut/>
+    <div v-show="dataList.length==0">
+      <el-empty :image-size="300" description="暂无数据"/>
+    </div>
     <ul>
       <li v-for="(item, index) in dataList" v-bind:key="index">
         <div class="ceci-item">
-          <resource-list :data="item"/>
+          <resource-list :data="item" :id=pageIndex(index)  :same-group-visible="sameGroupVisible"/>
         </div>
       </li>
     </ul>
@@ -16,8 +18,6 @@
         :page-sizes="[12, 24, 36, 48, 60]"
         :total="totalSize"
         layout="total, sizes, prev, pager, next, jumper"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
       />
     </div>
   </div>
@@ -32,20 +32,22 @@ import ResourceDetail from '@/components/resource/index.vue'
 import bus from '@/utils/bus'
 import { ElPagination } from 'element-plus/lib'
 import { useRoute } from 'vue-router'
-import HeaderShortCut from '@/components/header/modules/ShortCut.vue'
 
 export default defineComponent({
   name: 'Resource',
-  components: { HeaderShortCut, ElPagination, ResourceList: ResourceDetail },
+  components: { ElPagination, ResourceList: ResourceDetail },
   setup () {
     const dataList = ref<ResConfig[]>([])
     const currentPage = ref<number>(1)
     const pageSize = ref<number>(12)
     const totalSize = ref<number>(0)
     const searchKeyword = ref('')
+    const sameGroupVisible = ref(true)
     const route = useRoute()
 
     async function fetchData () {
+      const queryId = router.currentRoute.value.query.course
+      sameGroupVisible.value = !queryId
       try {
         const { code, result: { items: data, total } } = await getRes({
           params:
@@ -53,7 +55,7 @@ export default defineComponent({
               page: currentPage.value,
               pageSize: pageSize.value,
               title: searchKeyword.value,
-              course: router.currentRoute.value.query.course
+              course: queryId
             }
         })
         if (code === ERR_SUCCESS && data) {
@@ -70,21 +72,13 @@ export default defineComponent({
       fetchData()
     })
 
-    const handleSizeChange = () => {
-      fetchData()
+    const pageIndex = (index: number) => {
+      return index + 1 + (pageSize.value * (currentPage.value - 1))
     }
-
-    function handleCurrentChange () {
-      fetchData()
-    }
-
-    onBeforeMount(() => {
-      fetchData()
-    }
-    )
+    onBeforeMount(() => fetchData())
 
     watch(
-      () => route,
+      [searchKeyword, currentPage, pageSize, route],
       () => {
         fetchData()
       },
@@ -96,8 +90,8 @@ export default defineComponent({
       currentPage,
       pageSize,
       totalSize,
-      handleCurrentChange,
-      handleSizeChange
+      sameGroupVisible,
+      pageIndex
     }
   }
 
@@ -112,7 +106,13 @@ export default defineComponent({
 }
 
 li {
-  padding: 10px;
+  padding: 10px 50px;
   cursor: grab;
+}
+
+.pagination {
+  margin: 10px;
+  display: flex;
+  justify-content: center;
 }
 </style>

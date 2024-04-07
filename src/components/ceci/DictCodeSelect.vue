@@ -45,7 +45,7 @@ export default {
 
 <style scoped>
 .el-select {
-  width: 160px;
+  width: 120px;
   margin: 10px;
 }
 </style>

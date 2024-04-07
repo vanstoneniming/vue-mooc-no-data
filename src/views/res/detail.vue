@@ -1,14 +1,12 @@
 <template>
   <div class="home">
-    <HeaderShortCut />
     <div>
+      <div v-show="datalist.length==0">
+        <el-empty :image-size="300" description="暂无数据"/>
+      </div>
       <ul>
-        <li v-for="(item, index) in datalist"
-            :key="index"
-        >
-          <div class="ceci-item">
-            <storage-detail :data="item"/>
-          </div>
+        <li v-for="(item, index) in datalist" :key="index">
+          <storage-detail :data="item"/>
         </li>
       </ul>
     </div>
@@ -20,15 +18,13 @@
         :page-sizes="[12, 24, 36, 48, 60]"
         :total="totalSize"
         layout="total, sizes, prev, pager, next, jumper"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
       />
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, onBeforeMount, ref } from 'vue'
+import { defineComponent, onBeforeMount, ref, watch } from 'vue'
 import { getResDetail } from '@/api/common'
 import { ResConfig } from '@/types'
 import { ERR_SUCCESS } from '@/api/config'
@@ -36,12 +32,11 @@ import { useRoute } from 'vue-router'
 import router from '@/router'
 import StorageDetail from '@/components/resource/detail.vue'
 import bus from '@/utils/bus'
-import { ElMessage, ElPagination } from 'element-plus/lib'
-import HeaderShortCut from '@/components/header/modules/ShortCut.vue'
+import { ElPagination } from 'element-plus/lib'
 
 export default defineComponent({
   name: 'Storage',
-  components: { HeaderShortCut, ElPagination, StorageDetail },
+  components: { ElPagination, StorageDetail },
   setup () {
     const route = useRoute()
     const datalist = ref<ResConfig[]>([])
@@ -78,23 +73,24 @@ export default defineComponent({
       fetchData()
     })
 
-    const handleSizeChange = () => fetchData()
-
-    const handleCurrentChange = () => fetchData()
-
     onBeforeMount(() => fetchData())
     const goToDetail = (item: ResConfig) => {
       router.push({ name: 'ResourceDetail', params: { id: item.id } })
     }
+
+    watch(
+      [searchKeyword, currentPage, pageSize, route],
+      () => {
+        fetchData()
+      }
+    )
 
     return {
       datalist,
       currentPage,
       pageSize,
       totalSize,
-      goToDetail,
-      handleCurrentChange,
-      handleSizeChange
+      goToDetail
     }
   }
 })
@@ -108,10 +104,16 @@ export default defineComponent({
 }
 
 li {
-  padding: 10px;
+  margin: 10px 50px;
 }
 
 .el-icon {
   margin-right: 8px;
+}
+
+.pagination {
+  margin: 10px;
+  display: flex;
+  justify-content: center;
 }
 </style>
