@@ -12,33 +12,17 @@
         </div>
       </template>
       <el-row class="center-row">
-        <el-col :span="6">
-          <el-statistic :value="268500" title="Daily active users"/>
+        <el-col :span="5">
+          <el-statistic :value="ceciCount" title="册次数量"/>
         </el-col>
-        <el-col :span="6">
-          <el-statistic :value="138">
-            <template #title>
-              <div style="display: inline-flex; align-items: center">
-                Ratio of men to women
-                <el-icon :size="12" style="margin-left: 4px">
-                  <Male/>
-                </el-icon>
-              </div>
-            </template>
-            <template #suffix>/100</template>
-          </el-statistic>
+        <el-col :span="5">
+          <el-statistic :value="courseCount" title="课程数量"/>
         </el-col>
-        <el-col :span="6">
-          <el-statistic :value="outputValue" title="Total Transactions"/>
+        <el-col :span="7">
+          <el-statistic :value="resourceCount" title="资源数量"/>
         </el-col>
-        <el-col :span="6">
-          <el-statistic :value="562" title="Feedback number">
-            <template #suffix>
-              <el-icon style="vertical-align: -0.125em">
-                <ChatLineRound/>
-              </el-icon>
-            </template>
-          </el-statistic>
+        <el-col :span="7">
+          <el-statistic :value="resourceUrlCount" title="链接数量"/>
         </el-col>
       </el-row>
       <el-divider/>
@@ -138,16 +122,33 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
-import { useTransition } from '@vueuse/core'
-import { ChatLineRound, Male } from '@element-plus/icons-vue'
+import { onMounted, ref } from 'vue'
+import { getDataCount } from '@/api/common'
+import { ERR_SUCCESS } from '@/api/config'
 
-const source = ref(0)
-const outputValue = useTransition(source, {
-  duration: 1500
+const ceciCount = ref(0)
+const resourceUrlCount = ref(0)
+const courseCount = ref(0)
+const resourceCount = ref(0)
+
+async function fetchData () {
+  try {
+    const { code, result: { ceci_count: ceciCountResult, course_count: courseCountResult, resource_count: resourceCountResult, resource_url_count: resourceUrlCountResult } } = await getDataCount()
+    if (code === ERR_SUCCESS) {
+      console.log(ceciCountResult)
+      ceciCount.value = ceciCountResult
+      resourceUrlCount.value = resourceUrlCountResult
+      courseCount.value = courseCountResult
+      resourceCount.value = resourceCountResult
+    }
+  } catch (error) {
+    console.error('Error fetching data:', error)
+  }
+}
+
+onMounted(() => {
+  fetchData()
 })
-source.value = 172000
-
 </script>
 
 <style scoped>
@@ -179,29 +180,29 @@ source.value = 172000
 }
 
 .card-header {
-  font-size: 36px;
+  font-size: 18px;
   color: #337ecc;
 }
 
 .el-card li {
-  font-size: 24px;
+  font-size: 16px;
   line-height: 1.5;
   color: #409EFF;
   margin: 20px 0;
 }
 
 .el-card p {
-  font-size: 36px;
+  font-size: 14px;
   line-height: 1.5;
 }
 
 .card-footer {
-  font-size: 24px;
+  font-size: 12px;
   line-height: 1.5;
 }
 
 .card-footer li {
-  font-size: 24px;
+  font-size: 12px;
   color: #73767a;
   margin: 5px 0;
 }
@@ -226,4 +227,5 @@ source.value = 172000
   justify-content: center;
   align-items: center;
 }
+
 </style>

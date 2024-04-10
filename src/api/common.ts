@@ -7,7 +7,7 @@ import {
   MoocCourseResponseConfig,
   MoocResponseConfig, MoocDictCodeResponseConfig,
   NavConfig, ResConfig, ResLinkConfig,
-  SidebarItemConfig, DictCodeConfig
+  SidebarItemConfig, DictCodeConfig, ResponseConfig, DataCountConfig
 } from '@/types'
 
 // header navigation list
@@ -49,6 +49,9 @@ export function getResDetail (id: string, params: Record<any, any>): Promise<Moo
 }
 export function getDictCode (params: Record<any, any>): Promise<MoocDictCodeResponseConfig<DictCodeConfig[]>> {
   return axios.get('/api/system/dict_item/by/code', params)
+}
+export function getDataCount (): Promise<ResponseConfig<DataCountConfig>> {
+  return axios.get('/api/system/data_count')
 }
 
 export function getImages (thumbs: string, width: number) {

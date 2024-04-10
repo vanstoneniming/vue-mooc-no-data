@@ -5,12 +5,13 @@ import { setupStore } from '@/store'
 import 'normalize.css'
 import '@/assets/styles/index.scss'
 import { setupElementPlus } from '@/setup/element-plus'
+import 'bootstrap'
+import 'bootstrap/dist/css/bootstrap.min.css'
 
 const app = createApp(App)
 
 setupElementPlus(app)
 
-// setup vuex store
 setupStore(app)
 
 // setup router

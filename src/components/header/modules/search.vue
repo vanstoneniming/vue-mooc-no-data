@@ -1,30 +1,18 @@
 <template>
-  <div class="search">
-    <!-- input -->
-    <div class="search-input">
-      <input
-        v-model="keyword"
-        type="text"
-        placeholder="请输入关键词..."
-        @focus="isFocus = true"
-        @blur="isFocus = false"
-        @keyup.enter="handleKeywordChange"
-      >
-    </div>
-
-<!--
-    &lt;!&ndash; hot tags &ndash;&gt;
-    <ul v-show="!isFocus && !keyword" class="search-hot-tags">
-      <li class="tag-item">精品课</li>
-      <li class="tag-item">云平台</li>
-    </ul>
--->
-
-    <!-- icon -->
+  <div class="d-flex align-items-center">
+    <input v-model="keyword"
+           class="form-control me-2 form-control"
+           placeholder="册次、课程关键词..."
+           type="text"
+           @blur="isFocus = false"
+           @focus="isFocus = true"
+           @keyup.enter="handleKeywordChange"
+    >
     <div class="search-icon" @click="handleKeywordChange">
       <i class="iconfont icon-search"></i>
     </div>
   </div>
+
 </template>
 <script lang="ts">
 
@@ -40,75 +28,30 @@ export default defineComponent({
     function handleKeywordChange () {
       bus.emit('keywordChange', keyword.value)
     }
+
     return { keyword, isFocus, handleKeywordChange }
   }
 })
 </script>
 <style lang="scss" scoped>
-  @import '~@/assets/styles/variables.scss';
-  @import '~@/assets/styles/mixin.scss';
-  @import '~@/assets/styles/responsive.scss';
-  .search {
-    position: relative;
-    float: left;
-    margin-left: 24px;
-    padding: 16px 0;
-    height: 72px;
-    box-sizing: border-box;
-    @include respond-to {
-      margin-left: 14px;
-    }
-    &-input {
-      padding: 8px 4px;
-      height: 40px;
-      border-radius: $border-radius-normal;
-      box-sizing: border-box;
-      background-color:#E9E9E9;
-      input {
-        padding: 0 40px 0 12px;
-        width: 380px;
-        height: 24px;
-        line-height: 24px;
-        border: none;
-        outline: none;
-        background-color: transparent;
-        box-sizing: border-box;
-        color: $regular-text;
-        font-size: $font-normal;
-        &::placeholder {
-          color: $placeholder-text;
-        }
-        @include respond-to {
-          width: 200px;
-          padding: 0 8px;
-        }
-      }
-    }
-    &-hot-tags {
-      position: absolute;
-      right: 40px;
-      top: 50%;
-      transform: translateY(-50%);
-      .tag-item {
-        display: inline-block;
-        vertical-align: middle;
-        padding: 0 8px;
-        font-size: $font-normal;
-        color: $regular-text;
-        cursor: pointer;
-        &:hover {
-          color: $theme-red;
-        }
-      }
-    }
-    &-icon {
-      position: absolute;
-      right: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: $font-largex;
-      cursor: pointer;
-      @include extend-click(-5px);
-    }
-  }
+.d-flex {
+  position: relative; /* 设置相对定位 */
+  display: flex;
+}
+
+.align-items-center {
+  align-items: center;
+}
+
+.search-icon {
+  cursor: pointer;
+  position: absolute; /* 设置绝对定位 */
+  right: 15px; /* 调整图标与输入框的距离 */
+  top: 50%; /* 垂直居中 */
+  transform: translateY(-50%); /* 垂直居中 */
+}
+
+.form-control {
+  padding-right: 30px; /* 给输入框增加右边距以容纳图标 */
+}
 </style>

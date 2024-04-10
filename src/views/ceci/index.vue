@@ -24,9 +24,10 @@
       :total="totalSize"
       next-text="下一页"
       prev-text="上一页"
+      small
       :page-sizes="[12, 24, 36, 48, 60]"
       :hide-on-single-page=true
-      layout="total, sizes, prev, pager, next, jumper"
+      layout="prev, pager, next"
     />
   </div>
 </template>

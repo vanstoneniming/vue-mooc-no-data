@@ -4,6 +4,7 @@ import { getToken } from './cache'
 import { baseURL } from '@/api/config'
 import { config } from '@vue/test-utils'
 import router from '@/router'
+
 const instance = axios.create({
   timeout: 10000,
   baseURL
@@ -28,11 +29,13 @@ instance.interceptors.request.use((config: AxiosRequestConfig) => {
 instance.interceptors.response.use(
   (response: AxiosResponse) => {
     const { status, data } = response
-    if (status !== 200) {
-      return Promise.reject(data)
-    } else {
+    if (status === 200) {
+      if (data.code === 401) {
+        router.push('/login').then(() => ElMessage.info('Token过期，请重新登录！'))
+      }
       return Promise.resolve(data)
     }
+    return Promise.reject(data)
   },
   (err: AxiosError) => {
     if (err.response?.status === 401) {

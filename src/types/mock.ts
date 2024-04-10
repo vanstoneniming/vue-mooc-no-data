@@ -98,6 +98,13 @@ export interface LogConfig {
   system: string;
 }
 
+export interface DataCountConfig {
+  'course_count': number;
+  'ceci_count': number;
+  'resource_count': number;
+  'resource_url_count': number;
+}
+
 // address 类型
 export interface AddressConfig {
   id: string;

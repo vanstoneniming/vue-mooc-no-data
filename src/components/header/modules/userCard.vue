@@ -4,6 +4,8 @@
     <div class="card-top">
       <img :src="avatar" alt="图像" width="72" height="72">
       <div class="card-top-info">
+        <h6 class="title">{{userInfo.name}}</h6>
+        <p class="section">{{userInfo.email}}</p>
         <p class="card-top-info-nickname">{{userInfo.nickname}}</p>
         <p class="card-top-info-number">
           <span>经验：{{userInfo.id}}</span>
@@ -23,16 +25,8 @@
         </router-link>
       </li>
     </ul>
-    <!-- history -->
-    <div class="card-history">
-      <div class="card-history-item">
-        <i class="iconfont icon-history"></i>
-        <h3 class="title">{{userInfo.name}}</h3>
-        <p class="section">{{userInfo.email}}</p>
-        <span class="btn">继续</span>
-      </div>
-    </div>
-    <p class="card-exit" @click="handleLogoutClick">安全退出</p>
+    <el-divider/>
+    <div class="card-exit" @click="handleLogoutClick">安全退出</div>
   </div>
 </template>
 <script setup lang="ts">
@@ -112,13 +106,12 @@ defineComponent({
     &-links {
       margin: 16px 0;
       display: flex;
-      justify-content: center;
+      justify-content: space-between;
       align-items: center;
       flex-flow: wrap;
       &-item {
-        flex-basis: 128px;
-        margin-right: 2px;
-        margin-bottom: 2px;
+  width: calc(50% - 2px); /* 计算每列的宽度，减去一些间距 */
+        margin-bottom: 4px;
         height: 36px;
         line-height: 36px;
         background-color: rgba($placeholder-text, 0.3);
@@ -181,10 +174,7 @@ defineComponent({
       }
     }
     &-exit {
-      margin-top: 8px;
-      font-size: $font-small;
-      line-height: 18px;
-      text-align: left;
+      font-size: $font-medium;
       color: $secondary-text;
       cursor: pointer;
       &:hover {

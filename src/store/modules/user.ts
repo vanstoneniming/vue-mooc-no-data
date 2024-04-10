@@ -25,7 +25,7 @@ const actions = {
     try {
       const { code, result, message } = await userLogin(params)
       if (code === ERR_SUCCESS) {
-        console.log(result)
+        // console.log(result)
         commit(`${types.SET_TOKEN}`, setToken(result.token))
         return Promise.resolve(true)
       } else {

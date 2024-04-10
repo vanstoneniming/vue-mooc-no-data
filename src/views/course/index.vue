@@ -29,11 +29,11 @@
           <el-tag v-for="(nameTag, index) in ceciNameList(ceci_name)" :key="index" type="info">{{ nameTag }}</el-tag>
           <el-tag v-if="year" type="info">{{ year }}</el-tag>
           <el-button-group>
-            <el-button v-if="sameGroupVisible" type="success" @click="goToCeci(ceci)">同册课程</el-button>
-            <el-button v-if="thumbs" type="success" @click="openOriginal(thumbs)">新页大图</el-button>
-            <el-button v-if="thumbs" type="success" @click="thumbnails(title,thumbs,500)">弹层略图</el-button>
-            <el-button v-if="original_link" type="success" @click="openOriginal(original_link)">原始链接</el-button>
-            <el-button type="success" @click="goToDetail(id)">配套资源</el-button>
+            <el-button size="small" v-if="sameGroupVisible" type="success" @click="goToCeci(ceci)">同册课程</el-button>
+            <el-button size="small" v-if="thumbs" type="success" @click="openOriginal(thumbs)">新页大图</el-button>
+            <el-button size="small" v-if="thumbs" type="success" @click="thumbnails(title,thumbs,500)">弹层略图</el-button>
+            <el-button size="small" v-if="original_link" type="success" @click="openOriginal(original_link)">原始链接</el-button>
+            <el-button size="small" type="success" @click="goToDetail(id)">配套资源</el-button>
           </el-button-group>
         </div>
       </el-collapse-item>
@@ -43,12 +43,13 @@
     <el-pagination
       v-model:current-page="currentPage"
       v-model:page-size="pageSize"
-      :hide-on-single-page=true
-      :page-sizes="[12, 24, 36, 48, 60]"
       :total="totalSize"
-      layout="total, sizes, prev, pager, next, jumper"
       next-text="下一页"
       prev-text="上一页"
+      small
+      :page-sizes="[12, 24, 36, 48, 60]"
+      :hide-on-single-page=true
+      layout="prev, pager, next"
     />
   </div>
 </template>
@@ -57,7 +58,7 @@
 @import '~@/assets/styles/responsive.scss';
 
 .home {
-  margin: 10px 20px;
+  margin: 5px 5px;
 }
 
 .el-tag {
@@ -65,12 +66,8 @@
   line-height: 1.5; /* 调整标签的行高 */
 }
 
-.el-collapse {
-  margin: 0 50px;
-}
-
 button div.title {
-  font-size: 18px;
+  font-size: 14px;
   font-weight: bold;
   color: darkslategray;
 }
@@ -81,8 +78,8 @@ button.is-active div.title {
 
 .el-button-group {
   float: right;
-  margin-right: 25px;
-  margin-bottom: 10px;
+  margin-right: 5px;
+  margin-bottom: 5px;
 }
 
 .ceci-list {
@@ -91,7 +88,7 @@ button.is-active div.title {
 }
 
 .ceci-list li {
-  margin-bottom: 10px;
+  margin-bottom: 5px;
   box-sizing: border-box;
   text-align: center;
   height: 100%; /* 让所有的 li 高度自动撑满 */
@@ -104,7 +101,7 @@ button.is-active div.title {
 }
 
 .pagination {
-  margin: 10px;
+  margin: 5px;
   display: flex;
   justify-content: center;
 }
