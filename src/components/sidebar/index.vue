@@ -1,27 +1,28 @@
 <template>
-  <ul class="sidebar">
-    <li class="sidebar-item" @click="goBack">
+  <div class="sidebar">
+    <el-button @click="goBack">
       <i class="iconfont icon-left"></i>
       <span class="title">返回上页</span>
-    </li>
-    <li class="sidebar-item" @click="goShare">
+    </el-button>
+    <el-button @click="goShare">
       <i class="iconfont icon-share"></i>
       <span class="title">分享链接</span>
-    </li>
-<!--    <li
-      v-for="(item, index) in sidebarList"
-      :key="index"
-      class="sidebar-item"
-    >
-      <i :class="`icon-${item.icon}`" class="iconfont"></i>
-      <span class="title">{{ item.title }}</span>
-    </li>-->
-    <li v-show="showBackBtn" class="sidebar-item" @click="handleScrollToTop">
+    </el-button>
+    <el-button v-show="showBackBtn" @click="handleScrollToTop">
       <i class="iconfont icon-back"></i>
       <span class="title">返回顶部</span>
-    </li>
-  </ul>
+    </el-button>
+  </div>
 </template>
+<style scoped>
+.sidebar {
+  background-color: lightgray;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 5px;
+}
+</style>
 <script lang="ts">
 import { defineComponent, ref, onBeforeMount } from 'vue'
 import { useScroll } from '@/hooks/event/useScroll'
@@ -68,59 +69,3 @@ export default defineComponent({
   }
 })
 </script>
-<style lang="scss" scoped>
-@import '~@/assets/styles/variables.scss';
-
-.sidebar {
-  z-index: 50;
-  position: fixed;
-  top: 50%;
-  right: 0;
-  padding: 0 16px;
-  margin-top: -112px;
-  background-color: #fff;
-  border-top-left-radius: $border-radius-normal;
-  border-bottom-left-radius: $border-radius-normal;
-  box-shadow: $box-shadow-normal;
-
-  &-item {
-    position: relative;
-    width: 26px;
-    height: 56px;
-    line-height: 56px;
-    text-align: center;
-    cursor: pointer;
-
-    & + &::after {
-      content: '';
-      position: absolute;
-      left: 0;
-      right: 0;
-      border: 1px solid #f3f5f7;
-    }
-
-    &:hover {
-      .iconfont {
-        display: none;
-      }
-
-      .title {
-        display: inline-block;
-      }
-    }
-
-    .iconfont {
-      font-size: $font-largex;
-      color: $placeholder-text;
-    }
-
-    .title {
-      display: none;
-      padding: 14px 0;
-      line-height: 14px;
-      font-size: $font-small;
-      color: $primary-text;
-    }
-  }
-}
-</style>

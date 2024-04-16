@@ -9,19 +9,19 @@ module.exports = {
     },
     proxy: {
       '/api': {
-        // target: 'http://127.0.0.1:8000',
-        target: 'http://api.ke.video',
+        target: 'http://127.0.0.1:8000',
+        // target: 'http://api.ke.video',
         changeOrigin: true,
         pathRewrite: {
           '^/api': '/api'
         }
       },
       '/auth': {
-        // target: 'http://127.0.0.1:8000',
-        target: 'http://api.ke.video',
+        target: 'http://127.0.0.1:8000',
+        // target: 'http://api.ke.video',
         changeOrigin: true,
         pathRewrite: {
-          '^/auth': '/auth+'
+          '^/auth': '/auth'
         }
       }
     }

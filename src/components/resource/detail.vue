@@ -11,15 +11,17 @@
       <ul>
         <li v-for="(item, index) in storages" :key="index">
           <div class="flex-container">
+            <el-link @click="openOriginal(item)">{{ shortenText(item, 50) }}</el-link>
+          </div>
+          <div class="flex-container">
             <div class="remind">
               <el-tooltip v-if="commitStr(item)" :content="commitStr(item)" effect="dark" placement="right">
-              <el-button type="danger">403 Forbidden</el-button>
-            </el-tooltip>
+                <el-button type="danger">403 Forbidden</el-button>
+              </el-tooltip>
             </div>
-            <el-link @click="openOriginal(item)">{{ shortenText(item, 50) }}</el-link>
             <div class="right-aligned-buttons">
-              <el-button @click="copyLink(item, 'json')" size="small">链接字典</el-button>
-              <el-button @click="copyLink(item, 'text')" size="small">链接文本</el-button>
+              <el-button size="small" @click="copyLink(item, 'json')">链接字典</el-button>
+              <el-button size="small" @click="copyLink(item, 'text')">链接文本</el-button>
             </div>
           </div>
         </li>
@@ -99,31 +101,41 @@ export default {
 
 <style scoped>
 .card-header {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: bold;
 }
 
 .flex-container {
   display: flex;
-  flex-wrap: nowrap;
   align-items: center;
 }
 
-.remind{
-  width: 160px;
+.remind {
+  width: 150px;
 }
 
 .right-aligned-buttons {
   margin-left: auto;
 }
 
+.el-card {
+  margin: 5px;
+}
+
+.el-card ul {
+  padding: 0;
+}
+
 .el-link {
   font-size: 14px;
   color: deepskyblue;
+  white-space: nowrap; /* 强制文本在一行内显示 */
+  overflow: hidden; /* 隐藏溢出的文本 */
+  text-overflow: ellipsis; /* 在溢出时显示省略号 */
 }
 
 .el-button {
-  margin: 5px 10px;
+  margin: 5px;
 }
 
 .el-tag {
@@ -131,17 +143,7 @@ export default {
   margin: 0 10px;
 }
 
-.el-card__footer span {
-  background-color: powderblue;
-  font-size: 14px;
-  color: #E22D2D;
-  margin-left: 50px;
-  padding: 5px 10px;
-  border-radius: 3px;
-}
-
 .ceci-info {
   color: slategrey;
-  line-height: 1.5;
 }
 </style>

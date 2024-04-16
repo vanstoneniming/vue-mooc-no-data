@@ -3,11 +3,10 @@
     <div class="container-fluid px-0">
       <a class="navbar-brand" href="/home">
         <img
-          alt="课·视频 Logo"
+          alt="课·视频 ke.video"
           class="navbar-logo"
-          src="@/assets/images/common/icon.png"
+          src="@/assets/images/login/signlogo.png"
         />
-        课·视频
       </a>
       <button aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"
               class="navbar-toggler"
@@ -21,6 +20,12 @@
           </li>
           <li :class="{ active: isActive('/course') }" class="nav-item">
             <a class="nav-link" @click="navigate('/course')">课程</a>
+          </li>
+          <li :class="{ active: isActive('/questionrow') }" class="nav-item">
+            <a class="nav-link" @click="navigate('/questionrow')">题帽</a>
+          </li>
+          <li :class="{ active: isActive('/question') }" class="nav-item">
+            <a class="nav-link" @click="navigate('/question')">试题</a>
           </li>
         </ul>
         <div class="header-items">
@@ -42,8 +47,8 @@
     padding: 15px; /* 添加内部padding，以替换原来的全局padding */
 
     .navbar-logo {
-      height: 30px;
-      margin-right: 10px; /* 增加Logo和文本之间的间距 */
+      height: 40px;
+      margin: 0 10px; /* 增加Logo和文本之间的间距 */
     }
   }
 
@@ -63,6 +68,10 @@
 .navbar-collapse.show {
   background-color: #fff; /* 显示时背景变为白色 */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-nav .nav-item {
+  cursor: pointer;
 }
 
 .navbar-nav .nav-item.active {

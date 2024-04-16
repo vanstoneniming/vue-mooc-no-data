@@ -2,13 +2,13 @@
   <el-card shadow="always">
     <div class="card-header">
       <el-divider content-position="center">{{ data.course_name }}</el-divider>
-      <el-tag round size="large">{{ id }}</el-tag>
+      <el-tag round size="small">{{ id }}</el-tag>
       <span>{{ data.title }}</span>
       <el-tag type="info">{{ updateDate }}</el-tag>
       <el-tag v-if="data.teachers">{{ data.teachers }}</el-tag>
       <el-button-group>
-        <el-button v-if="sameGroupVisible" type="success" @click="goToCourse(data.course)">同课资源</el-button>
-        <el-button type="success" @click="goToDetail(data.id)">资源详情</el-button>
+        <el-button size="small" v-if="sameGroupVisible" type="success" @click="goToCourse(data.course)">同课资源</el-button>
+        <el-button size="small" type="success" @click="goToDetail(data.id)">资源详情</el-button>
       </el-button-group>
     </div>
   </el-card>
@@ -52,17 +52,21 @@ export default {
 
 <style scoped>
 .card-header {
-  font-size: 18px;
-  font-weight: bold;
+  font-size: 12px;
+  white-space: nowrap; /* 强制文本在一行内显示 */
+  overflow: hidden; /* 隐藏溢出的文本 */
+  text-overflow: ellipsis; /* 在溢出时显示省略号 */
 }
 
-.card-header span {
-  margin: 0 10px;
+.el-card {
+  margin: 5px;
 }
 
 .el-button-group {
   float: right;
-  margin-bottom: 10px;
 }
 
+.el-tag {
+  margin: 0 5px;
+}
 </style>

@@ -43,11 +43,21 @@ const basicRoutes: AppRouteRecordRaw[] = [
     component: () => import('@/views/course/index.vue')
   },
   {
+    path: '/questionrow',
+    name: 'Questionrow',
+    component: () => import('@/views/questionrow/index.vue')
+  },
+  {
+    path: '/question',
+    name: 'Question',
+    component: () => import('@/views/question/index.vue')
+  },
+  {
     path: '/login',
     name: 'Login',
     component: () => import('@/views/login/index.vue'),
     meta: {
-      title: '登陆',
+      title: '登陆/注册',
       hideFooter: true,
       hideHeader: true,
       hideSidebar: true

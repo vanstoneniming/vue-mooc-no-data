@@ -20,7 +20,7 @@
       small
       :page-sizes="[12, 24, 36, 48, 60]"
       :hide-on-single-page=true
-      layout="prev, pager, next"
+      layout="sizes, prev, pager, next"
     />
     </div>
   </div>
@@ -104,13 +104,17 @@ export default defineComponent({
 <style scoped>
 @import '~@/assets/styles/responsive.scss';
 
-.home {
-  margin: 10px 20px;
+.home ul {
+  padding: 5px;
 }
-
+.el-card ul {
+  padding: 0;
+}
 li {
-  padding: 10px 50px;
-  cursor: grab;
+  margin: 5px 0;
+  white-space: nowrap; /* 强制文本在一行内显示 */
+  overflow: hidden; /* 隐藏溢出的文本 */
+  text-overflow: ellipsis; /* 在溢出时显示省略号 */
 }
 
 .pagination {

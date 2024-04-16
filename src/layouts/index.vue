@@ -10,7 +10,6 @@
     <LayoutFooter v-show="!meta.hideFooter" class="layout-footer">
       <MoocFooter />
     </LayoutFooter>
-    <MoocSidebar v-show="!meta.hideSidebar" />
   </div>
 </template>
 <script lang="ts">
@@ -21,7 +20,6 @@ import LayoutMain from './main/index.vue'
 import LayoutFooter from './footer/index.vue'
 import MoocHeader from '@/components/header/index.vue'
 import MoocFooter from '@/components/footer/index.vue'
-import MoocSidebar from '@/components/sidebar/index.vue'
 export default defineComponent({
   name: 'Layout',
   components: {
@@ -29,8 +27,7 @@ export default defineComponent({
     LayoutMain,
     LayoutFooter,
     MoocHeader,
-    MoocFooter,
-    MoocSidebar
+    MoocFooter
   },
   setup () {
     const { meta } = toRefs(useRoute())

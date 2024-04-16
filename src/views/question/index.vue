@@ -11,11 +11,13 @@
     </div>
     <ul class="ceci-list">
       <li v-for="(item, index) in ceciList" :key="index">
-        <div class="ceci-item">
-          <ceci-detail :data="item"/>
-        </div>
+        <div class="quest-title" v-html="item.question"></div>
+        <div class="quest-select" v-html="item.questionselect"></div>
+        <div class="quest-answer" v-html="item.questionanswer"></div>
+        <div class="quest-describe" v-html="item.questiondescribe"></div>
       </li>
     </ul>
+
   </div>
   <div class="pagination">
     <el-pagination
@@ -44,22 +46,52 @@
   flex-wrap: wrap;
   list-style-type: none;
   padding: 0;
-  justify-content: center;
+  justify-content: left;
 }
 
 .ceci-list li {
   margin: 10px;
   box-sizing: border-box;
-  text-align: center;
+  text-align: left;
   cursor: grab;
-  height: 100%; /* 让所有的 li 高度自动撑满 */
+  width: 100%; /* 让所有的 li 高度自动撑满 */
+  background-color: #f3f5f7;
 }
 
 .ceci-item {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: inline;
+  text-align: left; /* 左对齐 <p> 元素内容 */
   height: 100%;
+}
+
+.ceci-item p {
+  display: inline; /* 让 <p> 元素占据整行 */
+}
+
+.ceci-item img {
+  margin: 0 auto; /* 水平居中 <img> 元素 */
+}
+
+/* Style for question title */
+.quest-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+/* Style for selectable options */
+.quest-select {
+  margin-bottom: 10px;
+}
+
+/* Style for answer */
+.quest-answer {
+  margin-bottom: 10px;
+}
+
+/* Style for description */
+.quest-describe {
+  font-style: italic;
 }
 
 .pagination {
@@ -71,19 +103,18 @@
 
 <script lang="ts">
 import { defineComponent, onBeforeMount, ref, watch } from 'vue'
-import { getCeci, getDictCode } from '@/api/common'
-import { CeciConfig, CodeOptionsConfig } from '@/types'
+import { getDictCode, getQuestion } from '@/api/common'
+import { CodeOptionsConfig, QuestionConfig } from '@/types'
 import { ERR_SUCCESS } from '@/api/config'
-import CeciDetail from '@/components/ceci/index.vue'
 import bus from '@/utils/bus'
 import DictCodeSelect from '@/components/ceci/DictCodeSelect.vue'
 import { ElPagination } from 'element-plus/lib/components'
 
 export default defineComponent({
-  name: 'Ceci',
-  components: { ElPagination, DictCodeSelect, CeciDetail },
+  name: 'Question',
+  components: { ElPagination, DictCodeSelect },
   setup () {
-    const dataList = ref<CeciConfig[]>([])
+    const dataList = ref<QuestionConfig[]>([])
     const currentPage = ref<number>(1)
     const pageSize = ref<number>(12)
     const totalSize = ref<number>(0)
@@ -107,7 +138,7 @@ export default defineComponent({
 
     async function fetchData () {
       try {
-        const { code, result: { items: data, total } } = await getCeci({
+        const { code, result: { items: data, total } } = await getQuestion({
           params: {
             page: currentPage.value,
             pageSize: pageSize.value,
@@ -121,17 +152,6 @@ export default defineComponent({
           }
         })
         if (code === ERR_SUCCESS && data) {
-          data.forEach((item) => {
-            const title: string = item.title
-            const s = title.split('_')
-            item.title = s[3].concat('-').concat(s[2])
-            item.platform = s[0]
-            item.period = s[1]
-            item.subject = s[2]
-            item.edition = s[3]
-            item.grade = s[4]
-            item.term = s[5]
-          })
           dataList.value = data
           totalSize.value = total
         }

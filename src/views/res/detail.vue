@@ -20,7 +20,7 @@
       small
       :page-sizes="[12, 24, 36, 48, 60]"
       :hide-on-single-page=true
-      layout="prev, pager, next"
+      layout="sizes, prev, pager, next"
     />
     </div>
   </div>
@@ -102,12 +102,8 @@ export default defineComponent({
 <style scoped>
 @import '~@/assets/styles/responsive.scss';
 
-.home {
-  margin: 10px 20px;
-}
-
-li {
-  margin: 10px 50px;
+.home ul {
+  padding: 5px;
 }
 
 .el-icon {

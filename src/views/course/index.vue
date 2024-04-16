@@ -49,7 +49,7 @@
       small
       :page-sizes="[12, 24, 36, 48, 60]"
       :hide-on-single-page=true
-      layout="prev, pager, next"
+      layout="sizes, prev, pager, next"
     />
   </div>
 </template>
@@ -62,14 +62,17 @@
 }
 
 .el-tag {
-  margin: 8px; /* 调整标签之间的下方间距 */
-  line-height: 1.5; /* 调整标签的行高 */
+  margin: 2px; /* 调整标签之间的下方间距 */
+  //line-height: 1.5; /* 调整标签的行高 */
 }
 
 button div.title {
   font-size: 14px;
   font-weight: bold;
   color: darkslategray;
+  white-space: nowrap; /* 强制文本在一行内显示 */
+  overflow: hidden; /* 隐藏溢出的文本 */
+  text-overflow: ellipsis; /* 在溢出时显示省略号 */
 }
 
 button.is-active div.title {
@@ -78,8 +81,7 @@ button.is-active div.title {
 
 .el-button-group {
   float: right;
-  margin-right: 5px;
-  margin-bottom: 5px;
+  margin: 5px;
 }
 
 .ceci-list {
@@ -88,7 +90,7 @@ button.is-active div.title {
 }
 
 .ceci-list li {
-  margin-bottom: 5px;
+  //margin-bottom: 5px;
   box-sizing: border-box;
   text-align: center;
   height: 100%; /* 让所有的 li 高度自动撑满 */
@@ -182,8 +184,9 @@ export default defineComponent({
     }
 
     const ceciNameList = (ceci: string) => {
-      return ceci.split('_')
+      return ceci.split('_').filter(item => item.trim() !== '')
     }
+
     const thumbnails = (title: string, thumbs: any, width: number) => {
       if (thumbs === null) {
         thumbsImage.value = ''

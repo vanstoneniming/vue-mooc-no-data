@@ -7,7 +7,7 @@ import {
   MoocCourseResponseConfig,
   MoocResponseConfig, MoocDictCodeResponseConfig,
   NavConfig, ResConfig, ResLinkConfig,
-  SidebarItemConfig, DictCodeConfig, ResponseConfig, DataCountConfig
+  SidebarItemConfig, DictCodeConfig, ResponseConfig, DataCountConfig, QuestionrowConfig, QuestionConfig
 } from '@/types'
 
 // header navigation list
@@ -27,6 +27,13 @@ export function getSidebar (): Promise<MoocResponseConfig<SidebarItemConfig[]>> 
 
 export function getCeci (params: Record<any, any>): Promise<MoocCeciResponseConfig<CeciConfig[]>> {
   return axios.get('/api/generator/ceci', params)
+}
+export function getQuestionrow (params: Record<any, any>): Promise<MoocCeciResponseConfig<QuestionrowConfig[]>> {
+  return axios.get('/api/generator/questionrow', params)
+}
+
+export function getQuestion (params: Record<any, any>): Promise<MoocCeciResponseConfig<QuestionConfig[]>> {
+  return axios.get('/api/generator/question', params)
 }
 
 export function getCeciDetail (id: string, params: Record<any, any>): Promise<MoocCourseResponseConfig<CourseConfig[]>> {

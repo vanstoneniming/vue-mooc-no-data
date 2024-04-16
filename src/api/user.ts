@@ -2,7 +2,8 @@ import { BindingConfig, LoginParams, MoocListResponseConfig, MoocResponseConfig,
 import axios from '@/utils/axios'
 
 // user login 用户登录
-export function userLogin (params: LoginParams): Promise<ResponseConfig<{ token: string }>> {
+export function userLogin (oldParams: LoginParams): Promise<ResponseConfig<{ token: string }>> {
+  const params = { username: oldParams.account, password: oldParams.password }
   const { username, password } = params
   if (username && password) {
     return axios.post('/api/system/login', params)
@@ -13,12 +14,13 @@ export function userLogin (params: LoginParams): Promise<ResponseConfig<{ token:
 }
 
 // user register 用户注册
-export function userRegister (params: LoginParams): Promise<MoocResponseConfig<string>> {
-  const { username, password } = params
-  if (username && password) {
-    return axios.post('/api/system/register', params)
+export function userRegister (oldParams: LoginParams): Promise<MoocResponseConfig<string>> {
+  const params = { username: oldParams.account, name: oldParams.name, password: oldParams.password }
+  const { username, name, password } = params
+  if (username && password && name) {
+    return axios.post('/api/system/user', params)
   } else {
-    const result = { code: -1, msg: '用户名或密码不能为空', data: '' }
+    const result = { code: -1, msg: '注册失败', data: '' }
     return Promise.resolve(result)
   }
 }

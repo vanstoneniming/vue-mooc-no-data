@@ -21,6 +21,14 @@ export interface CourseConfig {
   teachers: string;
   year: string;
 }
+export interface QuestionrowConfig {
+  id: number;
+  qrquestion: string;
+}
+export interface QuestionConfig {
+  id: number;
+  question: string;
+}
 export interface CeciConfig {
   id: number;
   title: string;
@@ -55,8 +63,9 @@ export interface ResLinkConfig {
 
 // login or register参数
 export interface LoginParams {
-  username: string;
+  account: string;
   password: string;
+  name?: string;
 }
 
 // userInfo类型

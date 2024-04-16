@@ -135,7 +135,6 @@ async function fetchData () {
   try {
     const { code, result: { ceci_count: ceciCountResult, course_count: courseCountResult, resource_count: resourceCountResult, resource_url_count: resourceUrlCountResult } } = await getDataCount()
     if (code === ERR_SUCCESS) {
-      console.log(ceciCountResult)
       ceciCount.value = ceciCountResult
       resourceUrlCount.value = resourceUrlCountResult
       courseCount.value = courseCountResult

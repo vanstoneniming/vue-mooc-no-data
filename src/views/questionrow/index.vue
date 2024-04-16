@@ -11,11 +11,10 @@
     </div>
     <ul class="ceci-list">
       <li v-for="(item, index) in ceciList" :key="index">
-        <div class="ceci-item">
-          <ceci-detail :data="item"/>
-        </div>
+        <div class="ceci-item" v-html="item.qrquestion"></div>
       </li>
     </ul>
+
   </div>
   <div class="pagination">
     <el-pagination
@@ -44,22 +43,30 @@
   flex-wrap: wrap;
   list-style-type: none;
   padding: 0;
-  justify-content: center;
+  justify-content: left;
 }
 
 .ceci-list li {
   margin: 10px;
   box-sizing: border-box;
-  text-align: center;
+  text-align: left;
   cursor: grab;
-  height: 100%; /* 让所有的 li 高度自动撑满 */
+  width: 100%; /* 让所有的 li 高度自动撑满 */
+  background-color: #f3f5f7;
 }
 
 .ceci-item {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: inline;
+  text-align: left; /* 左对齐 <p> 元素内容 */
   height: 100%;
+}
+
+.ceci-item p {
+  display: inline; /* 让 <p> 元素占据整行 */
+}
+
+.ceci-item img {
+  margin: 0 auto; /* 水平居中 <img> 元素 */
 }
 
 .pagination {
@@ -71,19 +78,18 @@
 
 <script lang="ts">
 import { defineComponent, onBeforeMount, ref, watch } from 'vue'
-import { getCeci, getDictCode } from '@/api/common'
-import { CeciConfig, CodeOptionsConfig } from '@/types'
+import { getDictCode, getQuestionrow } from '@/api/common'
+import { CodeOptionsConfig, QuestionrowConfig } from '@/types'
 import { ERR_SUCCESS } from '@/api/config'
-import CeciDetail from '@/components/ceci/index.vue'
 import bus from '@/utils/bus'
 import DictCodeSelect from '@/components/ceci/DictCodeSelect.vue'
 import { ElPagination } from 'element-plus/lib/components'
 
 export default defineComponent({
-  name: 'Ceci',
-  components: { ElPagination, DictCodeSelect, CeciDetail },
+  name: 'Questionrow',
+  components: { ElPagination, DictCodeSelect },
   setup () {
-    const dataList = ref<CeciConfig[]>([])
+    const dataList = ref<QuestionrowConfig[]>([])
     const currentPage = ref<number>(1)
     const pageSize = ref<number>(12)
     const totalSize = ref<number>(0)
@@ -107,7 +113,7 @@ export default defineComponent({
 
     async function fetchData () {
       try {
-        const { code, result: { items: data, total } } = await getCeci({
+        const { code, result: { items: data, total } } = await getQuestionrow({
           params: {
             page: currentPage.value,
             pageSize: pageSize.value,
@@ -121,17 +127,17 @@ export default defineComponent({
           }
         })
         if (code === ERR_SUCCESS && data) {
-          data.forEach((item) => {
-            const title: string = item.title
-            const s = title.split('_')
-            item.title = s[3].concat('-').concat(s[2])
-            item.platform = s[0]
-            item.period = s[1]
-            item.subject = s[2]
-            item.edition = s[3]
-            item.grade = s[4]
-            item.term = s[5]
-          })
+          // data.forEach((item) => {
+          //   const title: string = item.qrquestion
+          //   const s = title.split('_')
+          //   // item.title = s[3].concat('-').concat(s[2])
+          //   // item.platform = s[0]
+          //   // item.period = s[1]
+          //   // item.subject = s[2]
+          //   // item.edition = s[3]
+          //   // item.grade = s[4]
+          //   // item.term = s[5]
+          // })
           dataList.value = data
           totalSize.value = total
         }

@@ -1,20 +1,30 @@
 <template>
   <div class="login-form">
     <el-form ref="formRef" :model="formData" :rules="rules">
-      <el-form-item prop="username">
+      <el-form-item prop="account">
         <el-input
-          v-model="formData.username"
-          placeholder="请输入手机号"
+          v-model="formData.account"
+          placeholder="请输入手机号/邮箱"
           clearable
+          prefix-icon="Phone"
+        />
+      </el-form-item>
+      <el-form-item prop="name" v-show="type">
+        <el-input
+          v-model="formData.name"
+          clearable
+          placeholder="请输入名字"
+          prefix-icon="User"
         />
       </el-form-item>
       <el-form-item prop="password">
         <el-input
           v-model="formData.password"
-          type="password"
-          placeholder="请输入密码"
           clearable
+          placeholder="请输入密码"
+          prefix-icon="Lock"
           show-password
+          type="password"
           @keypress.enter="handleSubmitClick"
         />
       </el-form-item>
@@ -28,7 +38,7 @@
         </el-button>
       </el-form-item>
 
-      <div class="login-form-sns">
+      <div class="login-form-sns" v-show="false">
         <p class="title">其它方式登录</p>
         <ul class="list">
           <li class="iconfont icon-weibo"></li>
@@ -40,10 +50,10 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref, unref, reactive, computed } from 'vue'
+import { defineComponent, ref, unref, reactive, computed, watch, toRefs } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
-import { ElMessage } from 'element-plus/lib'
+import { useMessage } from '@/hooks/core/useMessage'
 
 export default defineComponent({
   name: 'LoginForm',
@@ -51,27 +61,45 @@ export default defineComponent({
     type: Number
   },
   setup (props) {
-    // const Message = useMessage()
+    const Message = useMessage()
     const store = useStore()
     const router = useRouter()
     const formRef = ref<any>(null)
+    const { value: loginType } = toRefs(reactive({ value: props.type }))
     const formData = reactive({
-      username: '',
+      account: '',
+      name: '',
       password: '',
       isLoading: false,
-      type: props.type
+      type: loginType
     })
+
     const rules = reactive({
-      username: [
-        { required: true, message: '手机号不能为空', trigger: 'blur' }
+      account: [
+        { required: true, message: '手机号/邮箱不能为空', trigger: 'blur' }
       ],
       password: [
         { required: true, message: '密码不能为空', trigger: 'blur' }
+      ],
+      name: [
+        { required: true, message: '姓名不能为空', trigger: 'blur' }
       ]
     })
+
+    watch(() => props.type, (newValue) => {
+      loginType.value = newValue
+      if (newValue === 1) {
+        rules.name = [
+          { required: true, message: '姓名不能为空', trigger: 'blur' }
+        ]
+      } else {
+        rules.name = []
+      }
+    }, { immediate: true })
+
     const loginBtnText = computed(() => {
-      const { type, isLoading } = formData
-      const txt = type === 0 ? '登录' : '注册'
+      const { isLoading } = formData
+      const txt = loginType.value === 0 ? '登录' : '注册'
       return isLoading ? `${txt}中...` : txt
     })
 
@@ -87,14 +115,15 @@ export default defineComponent({
         formData.isLoading = true
         try {
           const loginParams = {
-            username: formData.username,
-            password: formData.password
+            account: formData.account,
+            password: formData.password,
+            name: formData.name
           }
           const dispatchAction = formData.type === 0 ? 'user/login' : 'user/register'
           const messageType = formData.type === 0 ? '登录' : '注册'
           const submitResult = await store.dispatch(dispatchAction, loginParams)
           if (submitResult) {
-            ElMessage({
+            Message({
               type: 'success',
               message: `${messageType}成功`,
               duration: 1500,
@@ -102,16 +131,15 @@ export default defineComponent({
                 router.push('/')
               }
             })
-            await router.push('/')
           }
         } catch (e) {
-          formData.password = ''
-          ElMessage.error(e.message || '登录失败')
+          Message.error(e.message || '操作失败')
         } finally {
           formData.isLoading = false
         }
       })
     }
+
     return {
       formRef,
       formData,
@@ -121,6 +149,7 @@ export default defineComponent({
     }
   }
 })
+
 </script>
 <style lang="scss" scoped>
   @import '~@/assets/styles/variables.scss';
@@ -151,15 +180,12 @@ export default defineComponent({
       .el-form-item {
         margin-bottom: 30px;
       }
+
       .el-input__inner {
         height: 48px;
         line-height: 48px;
-        background-color: rgba($placeholder-text, 0.2);
         border: none;
         color: $primary-text;
-        &::placeholder {
-          color: $placeholder-text;
-        }
       }
       .el-button {
         padding: 12px 32px;

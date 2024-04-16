@@ -3,7 +3,7 @@ import * as types from '../mutation-types'
 import { LoginParams, UserState } from '@/types'
 import { ActionContext } from 'vuex'
 import { userLogin, userRegister, getUserInfo } from '@/api/user'
-import { ERR_OK, ERR_SUCCESS } from '@/api/config'
+import { ERR_SUCCESS } from '@/api/config'
 import { getToken, setToken, removeToken, removeUserInfo, setUserInfo, getUserInfo as getUserCacheInfo } from '@/utils/cache'
 
 const state = {
@@ -25,7 +25,6 @@ const actions = {
     try {
       const { code, result, message } = await userLogin(params)
       if (code === ERR_SUCCESS) {
-        // console.log(result)
         commit(`${types.SET_TOKEN}`, setToken(result.token))
         return Promise.resolve(true)
       } else {
@@ -38,7 +37,7 @@ const actions = {
   async register ({ commit }: ActionContext<UserState, any>, params: LoginParams) {
     try {
       const { code, data, msg } = await userRegister(params)
-      if (code === ERR_OK) {
+      if (code === ERR_SUCCESS) {
         commit(`${types.SET_TOKEN}`, setToken(data))
         return Promise.resolve(true)
       } else {
