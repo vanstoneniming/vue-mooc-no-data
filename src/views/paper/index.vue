@@ -1,19 +1,17 @@
 <template>
   <div class="home">
-    <dict-code-select v-model="platform" :options="platformOptions" placeholder="请选择平台"></dict-code-select>
-    <dict-code-select v-model="subject" :options="subjectOptions" placeholder="请选择学科"></dict-code-select>
-    <dict-code-select v-model="edition" :options="editionOptions" placeholder="请选择版本"></dict-code-select>
-    <dict-code-select v-model="period" :options="periodOptions" placeholder="请选择学段"></dict-code-select>
-    <dict-code-select v-model="grade" :options="gradeOptions" placeholder="请选择年级"></dict-code-select>
-    <dict-code-select v-model="term" :options="termOptions" placeholder="请选择学期"></dict-code-select>
+    <dict-code-select :bind="platform" :options="platformOptions" placeholder="请选择平台"></dict-code-select>
+    <dict-code-select :bind="subject" :options="subjectOptions" placeholder="请选择学科"></dict-code-select>
+    <dict-code-select :bind="edition" :options="editionOptions" placeholder="请选择版本"></dict-code-select>
+    <dict-code-select :bind="period" :options="periodOptions" placeholder="请选择学段"></dict-code-select>
+    <dict-code-select :bind="grade" :options="gradeOptions" placeholder="请选择年级"></dict-code-select>
+    <dict-code-select :bind="term" :options="termOptions" placeholder="请选择学期"></dict-code-select>
     <div v-show="ceciList.length==0">
         <el-empty description="暂无数据" :image-size="300"/>
     </div>
     <ul class="ceci-list">
       <li v-for="(item, index) in ceciList" :key="index">
-        <div class="ceci-item">
-          <ceci-detail :data="item"/>
-        </div>
+        <PaperFromDetail :item="item" :index="index+1"/>
       </li>
     </ul>
   </div>
@@ -44,22 +42,17 @@
   flex-wrap: wrap;
   list-style-type: none;
   padding: 0;
-  justify-content: center;
+  justify-content: left;
 }
 
 .ceci-list li {
   margin: 10px;
+  padding: 10px;
   box-sizing: border-box;
-  text-align: center;
+  text-align: left;
   cursor: grab;
-  height: 100%; /* 让所有的 li 高度自动撑满 */
-}
-
-.ceci-item {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
+  width: 100%; /* 让所有的 li 高度自动撑满 */
+  background-color: #f3f5f7;
 }
 
 .pagination {
@@ -71,19 +64,19 @@
 
 <script lang="ts">
 import { defineComponent, onBeforeMount, onMounted, onUnmounted, ref, watch } from 'vue'
-import { getCeci, getDictCode } from '@/api/common'
-import { CeciConfig, CodeOptionsConfig } from '@/types'
+import { getDictCode, getPaper } from '@/api/common'
+import { CodeOptionsConfig, PaperConfig } from '@/types'
 import { ERR_SUCCESS } from '@/api/config'
-import CeciDetail from '@/components/ceci/index.vue'
 import bus from '@/utils/bus'
 import DictCodeSelect from '@/components/ceci/DictCodeSelect.vue'
 import { ElPagination } from 'element-plus/lib/components'
+import PaperFromDetail from '@/components/paper/ListDetail.vue'
 
 export default defineComponent({
-  name: 'Ceci',
-  components: { ElPagination, DictCodeSelect, CeciDetail },
+  name: 'Paper',
+  components: { PaperFromDetail, ElPagination, DictCodeSelect },
   setup () {
-    const dataList = ref<CeciConfig[]>([])
+    const dataList = ref<PaperConfig[]>([])
     const currentPage = ref<number>(1)
     const pageSize = ref<number>(12)
     const totalSize = ref<number>(0)
@@ -103,11 +96,11 @@ export default defineComponent({
 
     async function fetchData () {
       try {
-        const { code, result: { items: data, total } } = await getCeci({
+        const { code, result: { items: data, total } } = await getPaper({
           params: {
             page: currentPage.value,
             pageSize: pageSize.value,
-            title: searchKeyword.value,
+            papercontent: searchKeyword.value,
             platform: platform.value,
             term: term.value,
             period: period.value,
@@ -117,17 +110,6 @@ export default defineComponent({
           }
         })
         if (code === ERR_SUCCESS && data) {
-          data.forEach((item) => {
-            const title: string = item.title
-            const s = title.split('_')
-            item.title = s[3].concat('-').concat(s[2])
-            item.platform = s[0]
-            item.period = s[1]
-            item.subject = s[2]
-            item.edition = s[3]
-            item.grade = s[4]
-            item.term = s[5]
-          })
           dataList.value = data
           totalSize.value = total
         }
@@ -154,16 +136,6 @@ export default defineComponent({
         return []
       }
     }
-
-    onBeforeMount(async () => {
-      platformOptions.value = await fetchDictCode('platform')
-      subjectOptions.value = await fetchDictCode('subject')
-      editionOptions.value = await fetchDictCode('edition')
-      periodOptions.value = await fetchDictCode('period')
-      gradeOptions.value = await fetchDictCode('grade')
-      termOptions.value = await fetchDictCode('term')
-    })
-
     onMounted(() => {
       bus.on('keywordChange', (event) => {
         searchKeyword.value = event as string
@@ -173,6 +145,15 @@ export default defineComponent({
     onUnmounted(() => {
       // 在组件销毁时移除事件监听
       bus.off('keywordChange')
+    })
+
+    onBeforeMount(async () => {
+      platformOptions.value = await fetchDictCode('platform')
+      subjectOptions.value = await fetchDictCode('subject')
+      editionOptions.value = await fetchDictCode('edition')
+      periodOptions.value = await fetchDictCode('period')
+      gradeOptions.value = await fetchDictCode('grade')
+      termOptions.value = await fetchDictCode('term')
     })
 
     watch([platform, subject, edition, period, grade,

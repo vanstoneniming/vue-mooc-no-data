@@ -27,6 +27,9 @@
           <li :class="{ active: isActive('/question') }" class="nav-item">
             <a class="nav-link" @click="navigate('/question')">试题</a>
           </li>
+          <li :class="{ active: isActive('/paper') }" class="nav-item">
+            <a class="nav-link" @click="navigate('/paper')">试卷</a>
+          </li>
         </ul>
         <div class="header-items">
           <HeaderSearch/>
@@ -90,7 +93,7 @@ import HeaderSearch from './modules/search.vue'
 import HeaderLoginArea from './modules/loginArea.vue'
 import { useRouter } from 'vue-router'
 import router from '@/router'
-const currentNav = ref(null) // 用于跟踪当前选中的导航项
+const currentNav = ref('') // 用于跟踪当前选中的导航项
 
 defineComponent({
   name: 'Header',
@@ -100,7 +103,7 @@ defineComponent({
   }
 })
 
-function navigate (nav) {
+function navigate (nav: string) {
   currentNav.value = nav
   router.push({ path: nav })
 }

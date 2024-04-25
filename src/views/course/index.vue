@@ -110,7 +110,7 @@ button.is-active div.title {
 </style>
 
 <script lang="ts">
-import { defineComponent, onBeforeMount, ref, watch } from 'vue'
+import { defineComponent, onBeforeMount, onMounted, onUnmounted, ref, watch } from 'vue'
 import { getCourse, getImages } from '@/api/common'
 import { CourseConfig } from '@/types'
 import { ERR_SUCCESS } from '@/api/config'
@@ -158,11 +158,6 @@ export default defineComponent({
       }
     }
 
-    bus.on('keywordChange', (event) => {
-      searchKeyword.value = event as string
-      fetchData()
-    })
-
     const goToDetail = (id: number) => {
       router.push({ name: 'Resource', query: { course: id } })
     }
@@ -197,6 +192,17 @@ export default defineComponent({
         dialogModelTitle.value = title + '_width=' + width + 'px'
       }
     }
+
+    onMounted(() => {
+      bus.on('keywordChange', (event) => {
+        searchKeyword.value = event as string
+      })
+    })
+
+    onUnmounted(() => {
+      // 在组件销毁时移除事件监听
+      bus.off('keywordChange')
+    })
 
     onBeforeMount(() => fetchData())
 

@@ -7,11 +7,19 @@
     <dict-code-select v-model="grade" :options="gradeOptions" placeholder="请选择年级"></dict-code-select>
     <dict-code-select v-model="term" :options="termOptions" placeholder="请选择学期"></dict-code-select>
     <div v-show="ceciList.length==0">
-        <el-empty description="暂无数据" :image-size="300"/>
+      <el-empty :image-size="300" description="暂无数据"/>
     </div>
     <ul class="ceci-list">
       <li v-for="(item, index) in ceciList" :key="index">
-        <div class="ceci-item" v-html="item.qrquestion"></div>
+        <div>
+          <div class="header-content">
+            <el-tag effect="dark" round type="success">{{ index + 1 }}</el-tag>
+            <div class="ceci-item" v-html="sanitizeHTML(item.qrquestion)"></div>
+          </div>
+        </div>
+        <div v-for="(question, qIndex) in filteredQuestions(item.id)" :key="qIndex">
+          <question-detail :index="getQuestionNo(qIndex)" :item="question"/>
+        </div>
       </li>
     </ul>
 
@@ -20,76 +28,35 @@
     <el-pagination
       v-model:current-page="currentPage"
       v-model:page-size="pageSize"
+      :hide-on-single-page=true
+      :page-sizes="[12, 24, 36, 48, 60]"
       :total="totalSize"
+      layout="sizes, prev, pager, next"
       next-text="下一页"
       prev-text="上一页"
       small
-      :page-sizes="[12, 24, 36, 48, 60]"
-      :hide-on-single-page=true
-      layout="sizes, prev, pager, next"
     />
   </div>
 </template>
 
-<style scoped>
-@import '~@/assets/styles/responsive.scss';
-
-.home {
-  margin: 10px;
-}
-
-.ceci-list {
-  display: flex;
-  flex-wrap: wrap;
-  list-style-type: none;
-  padding: 0;
-  justify-content: left;
-}
-
-.ceci-list li {
-  margin: 10px;
-  box-sizing: border-box;
-  text-align: left;
-  cursor: grab;
-  width: 100%; /* 让所有的 li 高度自动撑满 */
-  background-color: #f3f5f7;
-}
-
-.ceci-item {
-  display: inline;
-  text-align: left; /* 左对齐 <p> 元素内容 */
-  height: 100%;
-}
-
-.ceci-item p {
-  display: inline; /* 让 <p> 元素占据整行 */
-}
-
-.ceci-item img {
-  margin: 0 auto; /* 水平居中 <img> 元素 */
-}
-
-.pagination {
-  margin: 10px;
-  display: flex;
-  justify-content: center;
-}
-</style>
-
 <script lang="ts">
-import { defineComponent, onBeforeMount, ref, watch } from 'vue'
-import { getDictCode, getQuestionrow } from '@/api/common'
-import { CodeOptionsConfig, QuestionrowConfig } from '@/types'
+import { defineComponent, onBeforeMount, onMounted, onUnmounted, ref, watch } from 'vue'
+import { getDictCode, getQuestionrow, getQuestionsByIds } from '@/api/common'
+import { CodeOptionsConfig, QuestionConfig, QuestionrowConfig } from '@/types'
 import { ERR_SUCCESS } from '@/api/config'
 import bus from '@/utils/bus'
 import DictCodeSelect from '@/components/ceci/DictCodeSelect.vue'
 import { ElPagination } from 'element-plus/lib/components'
+import QuestionDetail from '@/components/question/Detail.vue'
+import { sanitizeHTML } from '@/hooks/utils/helper'
 
 export default defineComponent({
   name: 'Questionrow',
-  components: { ElPagination, DictCodeSelect },
+  methods: { sanitizeHTML },
+  components: { QuestionDetail, ElPagination, DictCodeSelect },
   setup () {
     const dataList = ref<QuestionrowConfig[]>([])
+    const questionList = ref<QuestionConfig[]>([])
     const currentPage = ref<number>(1)
     const pageSize = ref<number>(12)
     const totalSize = ref<number>(0)
@@ -106,10 +73,16 @@ export default defineComponent({
     const gradeOptions = ref<CodeOptionsConfig[]>([])
     const term = ref('')
     const termOptions = ref<CodeOptionsConfig[]>([])
-
     bus.on('keywordChange', (event) => {
       searchKeyword.value = event as string
     })
+
+    const filteredQuestions = (itemId: number): QuestionConfig[] => {
+      return questionList.value.filter(question => question.questionrow === itemId)
+    }
+    const getQuestionNo = (qindex: number): number => {
+      return qindex + 1
+    }
 
     async function fetchData () {
       try {
@@ -117,7 +90,7 @@ export default defineComponent({
           params: {
             page: currentPage.value,
             pageSize: pageSize.value,
-            title: searchKeyword.value,
+            qrquestion: searchKeyword.value,
             platform: platform.value,
             term: term.value,
             period: period.value,
@@ -126,20 +99,14 @@ export default defineComponent({
             subject: subject.value
           }
         })
-        if (code === ERR_SUCCESS && data) {
-          // data.forEach((item) => {
-          //   const title: string = item.qrquestion
-          //   const s = title.split('_')
-          //   // item.title = s[3].concat('-').concat(s[2])
-          //   // item.platform = s[0]
-          //   // item.period = s[1]
-          //   // item.subject = s[2]
-          //   // item.edition = s[3]
-          //   // item.grade = s[4]
-          //   // item.term = s[5]
-          // })
+        if (code === ERR_SUCCESS && data && data.length > 0) {
           dataList.value = data
           totalSize.value = total
+          const idsString = data.map(item => item.id).join(',')
+          const { code, result: questions } = await getQuestionsByIds(idsString)
+          if (code === ERR_SUCCESS && questions) {
+            questionList.value = questions
+          }
         }
       } catch (error) {
         console.error('Error fetching data:', error)
@@ -164,6 +131,16 @@ export default defineComponent({
         return []
       }
     }
+    onMounted(() => {
+      bus.on('keywordChange', (event) => {
+        searchKeyword.value = event as string
+      })
+    })
+
+    onUnmounted(() => {
+      // 在组件销毁时移除事件监听
+      bus.off('keywordChange')
+    })
 
     onBeforeMount(async () => {
       platformOptions.value = await fetchDictCode('platform')
@@ -178,9 +155,9 @@ export default defineComponent({
       term, searchKeyword, currentPage, pageSize], () => {
       fetchData()
     }, { immediate: true })
-
     return {
       ceciList: dataList,
+      questionList,
       currentPage,
       pageSize,
       totalSize,
@@ -196,8 +173,81 @@ export default defineComponent({
       grade,
       gradeOptions,
       term,
-      termOptions
+      termOptions,
+      getQuestionNo,
+      filteredQuestions
     }
   }
 })
 </script>
+
+<style scoped>
+
+.home {
+  margin: 10px;
+}
+
+.header-content {
+  display: flex;
+}
+
+.el-tag {
+  margin-right: 8px;
+  margin-left: 15px;
+}
+
+.el-card {
+  margin: 20px 0;
+}
+
+.ceci-list {
+  display: flex;
+  flex-wrap: wrap;
+  list-style-type: none;
+  justify-content: left;
+  margin: 0;
+}
+
+ul {
+  padding-left: 0;
+}
+
+p img {
+  width: fit-content;
+}
+
+.ceci-list li {
+  margin: 10px 0;
+  padding-top: 10px;
+  box-sizing: border-box;
+  text-align: left;
+  cursor: grab;
+  width: 100%; /* 让所有的 li 高度自动撑满 */
+  background-color: snow;
+  border-color: seagreen;
+  border-style: solid;
+  border-radius: 5px;
+  border-width: 2px;
+}
+
+.ceci-item {
+  display: inline;
+  text-align: left; /* 左对齐 <p> 元素内容 */
+  height: 100%;
+}
+
+.ceci-item p {
+  display: inline; /* 让 <p> 元素占据整行 */
+}
+
+.ceci-item img {
+  margin: 0 auto; /* 水平居中 <img> 元素 */
+  width: 100%;
+}
+
+.pagination {
+  margin: 10px;
+  display: flex;
+  justify-content: center;
+}
+</style>

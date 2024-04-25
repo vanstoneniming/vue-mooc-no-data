@@ -11,13 +11,9 @@
     </div>
     <ul class="ceci-list">
       <li v-for="(item, index) in ceciList" :key="index">
-        <div class="quest-title" v-html="item.question"></div>
-        <div class="quest-select" v-html="item.questionselect"></div>
-        <div class="quest-answer" v-html="item.questionanswer"></div>
-        <div class="quest-describe" v-html="item.questiondescribe"></div>
+        <question-detail :item="item" :index="index+1"/>
       </li>
     </ul>
-
   </div>
   <div class="pagination">
     <el-pagination
@@ -51,6 +47,7 @@
 
 .ceci-list li {
   margin: 10px;
+  padding: 10px;
   box-sizing: border-box;
   text-align: left;
   cursor: grab;
@@ -64,35 +61,19 @@
   height: 100%;
 }
 
-.ceci-item p {
-  display: inline; /* 让 <p> 元素占据整行 */
-}
-
 .ceci-item img {
   margin: 0 auto; /* 水平居中 <img> 元素 */
 }
 
-/* Style for question title */
-.quest-title {
+.quest-row {
   font-size: 18px;
-  font-weight: bold;
-  margin-bottom: 10px;
 }
 
-/* Style for selectable options */
-.quest-select {
-  margin-bottom: 10px;
-}
-
-/* Style for answer */
-.quest-answer {
-  margin-bottom: 10px;
+.quest-answer p {
+  color: #E22D2D;
 }
 
 /* Style for description */
-.quest-describe {
-  font-style: italic;
-}
 
 .pagination {
   margin: 10px;
@@ -102,17 +83,18 @@
 </style>
 
 <script lang="ts">
-import { defineComponent, onBeforeMount, ref, watch } from 'vue'
+import { defineComponent, onBeforeMount, onMounted, onUnmounted, ref, watch } from 'vue'
 import { getDictCode, getQuestion } from '@/api/common'
 import { CodeOptionsConfig, QuestionConfig } from '@/types'
 import { ERR_SUCCESS } from '@/api/config'
 import bus from '@/utils/bus'
 import DictCodeSelect from '@/components/ceci/DictCodeSelect.vue'
 import { ElPagination } from 'element-plus/lib/components'
+import QuestionDetail from '@/components/question/Detail.vue'
 
 export default defineComponent({
   name: 'Question',
-  components: { ElPagination, DictCodeSelect },
+  components: { QuestionDetail, ElPagination, DictCodeSelect },
   setup () {
     const dataList = ref<QuestionConfig[]>([])
     const currentPage = ref<number>(1)
@@ -132,17 +114,13 @@ export default defineComponent({
     const term = ref('')
     const termOptions = ref<CodeOptionsConfig[]>([])
 
-    bus.on('keywordChange', (event) => {
-      searchKeyword.value = event as string
-    })
-
     async function fetchData () {
       try {
         const { code, result: { items: data, total } } = await getQuestion({
           params: {
             page: currentPage.value,
             pageSize: pageSize.value,
-            title: searchKeyword.value,
+            question: searchKeyword.value,
             platform: platform.value,
             term: term.value,
             period: period.value,
@@ -178,6 +156,16 @@ export default defineComponent({
         return []
       }
     }
+    onMounted(() => {
+      bus.on('keywordChange', (event) => {
+        searchKeyword.value = event as string
+      })
+    })
+
+    onUnmounted(() => {
+      // 在组件销毁时移除事件监听
+      bus.off('keywordChange')
+    })
 
     onBeforeMount(async () => {
       platformOptions.value = await fetchDictCode('platform')
