@@ -28,6 +28,14 @@ export interface QuestionrowConfig {
 export interface QuestionConfig {
   id: number;
   question: string;
+  questionrow: number;
+}
+export interface PaperConfig {
+  id: number;
+  papername: string;
+  previewimages: string;
+  paperfile: string;
+  papercontent: string;
 }
 export interface CeciConfig {
   id: number;

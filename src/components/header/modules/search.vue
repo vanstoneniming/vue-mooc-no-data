@@ -2,7 +2,7 @@
   <div class="d-flex align-items-center">
     <input v-model="keyword"
            class="form-control me-2 form-control"
-           placeholder="册次、课程关键词..."
+           placeholder="输入关键词..."
            type="text"
            @blur="isFocus = false"
            @focus="isFocus = true"
