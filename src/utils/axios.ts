@@ -31,7 +31,7 @@ instance.interceptors.response.use(
     const { status, data } = response
     if (status === 200) {
       if (data.code === 401) {
-        router.push('/login').then(() => ElMessage.info('Token过期，请重新登录！'))
+        router.push('/login').then(() => ElMessage.info('Token过期，重新登录！'))
       }
       return Promise.resolve(data)
     }
@@ -39,7 +39,7 @@ instance.interceptors.response.use(
   },
   (err: AxiosError) => {
     if (err.response?.status === 401) {
-      router.push('/login').then(() => ElMessage.info('身份认证失效，需要登录！')
+      router.push('/login').then(() => ElMessage.info('认证失败，需要登录！')
       )
     } else {
       ElMessage.error(err.message || '接口请求异常')
