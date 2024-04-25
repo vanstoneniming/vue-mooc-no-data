@@ -7,7 +7,7 @@ import {
   MoocCourseResponseConfig,
   MoocResponseConfig, MoocDictCodeResponseConfig,
   NavConfig, ResConfig, ResLinkConfig,
-  SidebarItemConfig, DictCodeConfig, ResponseConfig, DataCountConfig, QuestionrowConfig, QuestionConfig
+  SidebarItemConfig, DictCodeConfig, ResponseConfig, DataCountConfig, QuestionrowConfig, QuestionConfig, PaperConfig
 } from '@/types'
 
 // header navigation list
@@ -32,27 +32,42 @@ export function getQuestionrow (params: Record<any, any>): Promise<MoocCeciRespo
   return axios.get('/api/generator/questionrow', params)
 }
 
+export function getQuestionsByIds (ids: string): Promise<ResponseConfig<QuestionConfig[]>> {
+  return axios.get('/api/generator/question_id/' + ids)
+}
+
 export function getQuestion (params: Record<any, any>): Promise<MoocCeciResponseConfig<QuestionConfig[]>> {
   return axios.get('/api/generator/question', params)
 }
 
-export function getCeciDetail (id: string, params: Record<any, any>): Promise<MoocCourseResponseConfig<CourseConfig[]>> {
-  return axios.get('/api/generator/ceci/' + id, params)
+export function getPaper (params: Record<any, any>): Promise<MoocCeciResponseConfig<PaperConfig[]>> {
+  return axios.get('/api/generator/paperfrom', params)
+}
+
+export function getPaperDetail (id: string): Promise<MoocCeciResponseConfig<PaperConfig>> {
+  return axios.get('/api/generator/paperfrom/' + id)
+}
+export function getPaperFile (ids: string): Promise<MoocDictCodeResponseConfig<PaperConfig>> {
+  return axios.get('/api/system/file/paper/' + ids)
+}
+
+export function getCeciDetail (id: string): Promise<MoocCourseResponseConfig<CourseConfig[]>> {
+  return axios.get('/api/generator/ceci/' + id)
 }
 
 export function getCourse (params: Record<any, any>): Promise<MoocCeciResponseConfig<CourseConfig[]>> {
   return axios.get('/api/generator/course', params)
 }
 
-export function getCourseDetail (id: string, params: Record<any, any>): Promise<MoocCourseResponseConfig<ResConfig[]>> {
-  return axios.get('/api/generator/course/' + id, params)
+export function getCourseDetail (id: string): Promise<MoocCourseResponseConfig<ResConfig[]>> {
+  return axios.get('/api/generator/course/' + id)
 }
 
 export function getRes (params: Record<any, any>): Promise<MoocCeciResponseConfig<ResConfig[]>> {
   return axios.get('/api/generator/resource', params)
 }
-export function getResDetail (id: string, params: Record<any, any>): Promise<MoocCeciResponseConfig<ResLinkConfig[]>> {
-  return axios.get('/api/generator/resource/' + id, params)
+export function getResDetail (id: string): Promise<MoocCeciResponseConfig<ResLinkConfig[]>> {
+  return axios.get('/api/generator/resource/' + id)
 }
 export function getDictCode (params: Record<any, any>): Promise<MoocDictCodeResponseConfig<DictCodeConfig[]>> {
   return axios.get('/api/system/dict_item/by/code', params)

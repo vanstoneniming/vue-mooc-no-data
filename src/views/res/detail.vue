@@ -51,13 +51,7 @@ export default defineComponent({
 
     async function fetchData () {
       try {
-        const { code, result: { items: data, total } } = await getResDetail(id, {
-          params:
-            {
-              // eslint-disable-next-line @typescript-eslint/camelcase
-              page: currentPage.value, pageSize: pageSize.value, resource_name: searchKeyword.value
-            }
-        })
+        const { code, result: { items: data, total } } = await getResDetail(id)
         if (code === ERR_SUCCESS && data) {
           data.map((item) => {
             const storageUrl: string = item.storages

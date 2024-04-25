@@ -53,6 +53,21 @@ const basicRoutes: AppRouteRecordRaw[] = [
     component: () => import('@/views/question/index.vue')
   },
   {
+    path: '/paper',
+    name: 'Paper',
+    component: () => import('@/views/paper/index.vue')
+  },
+  {
+    path: '/paper/:id',
+    name: 'PaperDetail',
+    component: () => import('@/views/paper/detail.vue')
+  },
+  {
+    path: '/paper/:id',
+    name: 'PaperDetail',
+    component: () => import('@/views/paper/detail.vue')
+  },
+  {
     path: '/login',
     name: 'Login',
     component: () => import('@/views/login/index.vue'),

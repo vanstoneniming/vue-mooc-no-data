@@ -32,6 +32,7 @@
 
 <script>
 import { ElMessage } from 'element-plus/lib'
+import { shortenText } from '@/hooks/utils/helper'
 
 export const CopyLinkType = {
   Text: 'text',
@@ -41,6 +42,7 @@ export const CopyLinkType = {
 export default {
   name: 'StorageDetail',
   methods: {
+    shortenText,
 
     copyLink (url, type = CopyLinkType.JSON) {
       const title = this.data.resource_name
@@ -62,17 +64,6 @@ export default {
     },
     openOriginal (url) {
       window.open(url, '_blank', 'noopener,noreferrer')
-    },
-    shortenText (text, maxLength) {
-      if (text.length <= maxLength) {
-        return text // 如果文本长度小于或等于最大长度，直接返回原文本
-      } else {
-        // 计算在中间添加省略号的位置
-        const ellipsisIndex = Math.floor(maxLength / 2)
-        const firstPart = text.slice(0, ellipsisIndex)
-        const secondPart = text.slice(text.length - ellipsisIndex)
-        return firstPart + '...' + secondPart // 返回缩短后的文本，中间添加省略号
-      }
     },
     commitStr (item) {
       if (item.includes('.exp.bcevod.com/')) {
