@@ -10,17 +10,8 @@
 
 <script lang="ts" setup>
 import { sanitizeHTML } from '@/hooks/utils/helper'
-import { PaperConfig } from '@/types'
 import router from '@/router'
 import { defineComponent } from 'vue'
-
-function splitPreviewImages (item: PaperConfig) {
-  return item && item.previewimages ? item.previewimages.split(',') : []
-}
-
-function paperFiles (item: PaperConfig) {
-  return item && item.paperfile ? item.paperfile : []
-}
 
 function goToDetail (id: number) {
   router.push({ name: 'PaperDetail', params: { id } })

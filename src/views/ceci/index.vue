@@ -1,11 +1,13 @@
 <template>
   <div class="home">
-    <dict-code-select v-model="platform" :options="platformOptions" placeholder="请选择平台"></dict-code-select>
-    <dict-code-select v-model="subject" :options="subjectOptions" placeholder="请选择学科"></dict-code-select>
-    <dict-code-select v-model="edition" :options="editionOptions" placeholder="请选择版本"></dict-code-select>
-    <dict-code-select v-model="period" :options="periodOptions" placeholder="请选择学段"></dict-code-select>
-    <dict-code-select v-model="grade" :options="gradeOptions" placeholder="请选择年级"></dict-code-select>
-    <dict-code-select v-model="term" :options="termOptions" placeholder="请选择学期"></dict-code-select>
+    <div class="top-sticky">
+      <dict-code-select v-model="platform" :options="platformOptions" placeholder="请选择平台"></dict-code-select>
+      <dict-code-select v-model="subject" :options="subjectOptions" placeholder="请选择学科"></dict-code-select>
+      <dict-code-select v-model="edition" :options="editionOptions" placeholder="请选择版本"></dict-code-select>
+      <dict-code-select v-model="period" :options="periodOptions" placeholder="请选择学段"></dict-code-select>
+      <dict-code-select v-model="grade" :options="gradeOptions" placeholder="请选择年级"></dict-code-select>
+      <dict-code-select v-model="term" :options="termOptions" placeholder="请选择学期"></dict-code-select>
+    </div>
     <div v-show="ceciList.length==0">
         <el-empty description="暂无数据" :image-size="300"/>
     </div>
@@ -37,6 +39,13 @@
 
 .home {
   margin: 10px;
+}
+
+.top-sticky {
+  background-color: white;
+  position: sticky;
+  top: 78px;
+  margin-top: -15px;
 }
 
 .ceci-list {

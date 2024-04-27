@@ -1,54 +1,53 @@
 <template>
-  <div class="page-header">
-    <el-page-header @back="goBack">
-      <template #content>
-        <span class="text-large font-600 mr-3"> {{ item.papername }} </span>
-      </template>
-      <template #extra>
-        <div class="flex items-center">
-          <DownFile :item="item" v-if="userInfo.id"/>
-          <el-switch v-model="showImg" active-text="显示图片" inactive-text="隐藏图片" inline-prompt
-                     size="large"></el-switch>
-        </div>
-      </template>
-    </el-page-header>
-    <el-divider></el-divider>
-  </div>
-
-  <div class="paper-detail">
-    <div class="content-row">
-      <!-- Image preview -->
-      <div class="image-preview">
-        <el-image
-          v-if="splitPreviewImages(item)[0]"
-          :initial-index="4"
-          :max-scale="7"
-          :min-scale="0.2"
-          :preview-src-list="splitPreviewImages(item)"
-          :src="splitPreviewImages(item)[0]"
-          :zoom-rate="1.2"
-          fit="cover"
-        />
+  <div class="content-row">
+    <div class="image-preview">
+      <el-divider content-position="left">试卷名称</el-divider>
+      <h6 class="fix-width-360"> {{ item.papername }} </h6>
+      <el-divider content-position="left">全卷预览</el-divider>
+      <el-image
+        v-if="splitPreviewImages(item)[0]"
+        :initial-index="0"
+        :max-scale="7"
+        :min-scale="0.2"
+        :preview-src-list="splitPreviewImages(item)"
+        :src="splitPreviewImages(item)[0]"
+        :zoom-rate="1.2"
+        fit="cover"
+        hide-on-click-modal="true"
+      />
+      <el-divider content-position="left">快速功能</el-divider>
+      <div class="flex items-center">
+        <el-button @click="goBack">
+          <el-icon class="el-icon--left">
+            <Back/>
+          </el-icon>返回上页</el-button>
+        <DownFile v-if="userInfo.id" :item="item"/>
+        <el-switch v-model="showImg" active-text="显示图片" inactive-text="隐藏图片"
+                   inline-prompt size="large"></el-switch>
       </div>
-
-      <div class="text-content">
-        <div class="content" v-html="content"></div>
-      </div>
+    </div>
+    <div class="text-content">
+      <el-divider content-position="right">试卷主体</el-divider>
+      <div class="content" v-html="content"></div>
     </div>
   </div>
 </template>
-
 <script lang="ts" setup>
 import { sanitizeHTML } from '@/hooks/utils/helper'
 import { PaperConfig } from '@/types'
 import router from '@/router'
-import { defineComponent, defineProps, ref, watch } from 'vue' // Import defineProps directly from 'vue'
+import { defineComponent, defineProps, ref, watch, computed } from 'vue' // Import defineProps directly from 'vue'
 import DownFile from '@/components/paper/DownFile.vue'
-import { userInfo } from '@/store/getters'
+import { useStore } from 'vuex'
 
+const store = useStore()
 const props = defineProps<{ item: PaperConfig }>() // Define props using defineProps
 const showImg = ref(true)
 const content = ref('')
+
+const userInfo = computed(() => {
+  return store.getters.userInfo
+})
 
 function goBack () {
   router.go(-1)
@@ -72,29 +71,6 @@ defineComponent({
 </script>
 
 <style scoped>
-.el-page-header {
-  padding-top: 20px;
-  margin-left: 5px;
-}
-
-.el-tag {
-  margin-right: 8px; /* Add spacing between el-tag and quest-title */
-}
-
-.paper-detail {
-  display: flex;
-  flex-direction: column;
-}
-
-.header-content {
-  display: flex;
-  align-items: center; /* Vertically center align elements */
-}
-
-.content-row {
-  display: flex;
-  flex-direction: column; /* Default to column layout */
-}
 
 .image-preview {
   margin-bottom: 20px; /* Add spacing between image and text */
@@ -120,24 +96,24 @@ defineComponent({
   gap: 10px;
 }
 
+.fix-width-360 {
+  padding-left: 10px;
+  width: 306px;
+  flex-wrap: wrap;
+  line-height: 1.5em;
+  color: #337ecc;
+}
 /* Media query for wider screens */
 @media screen and (min-width: 768px) {
-
-  .page-header {
-    width: 100%;
-    position: fixed;
-    margin-top: -10px;
-    padding-right: 20px;
-    background-color: white;
-  }
-
-  .content-row {
-    margin-top: 100px;
-    flex-direction: row; /* Switch to row layout on wider screens */
+  .fix-width-360 {
+    padding-left: 40px;
+    width: 306px;
+    flex-wrap: wrap;
+    line-height: 1.5em;
   }
 
   .image-preview {
-    margin-right: 20px; /* Add spacing between image and text */
+    position: fixed;
   }
 
   .image-preview .el-image {
@@ -145,9 +121,15 @@ defineComponent({
   }
 
   .text-content {
+    margin-top: 10px;
+    margin-left: 360px;
     padding-left: 20px;
     border-left: silver;
     border-left-style: solid;
+  }
+
+  .text-content .el-divider {
+    z-index: -1;
   }
 }
 

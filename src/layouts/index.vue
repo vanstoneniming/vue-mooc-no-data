@@ -43,7 +43,7 @@ export default defineComponent({
     flex-direction: column;
     min-height: 100vh;
     &-header {
-      z-index: 100;
+      z-index: 1;
       position: fixed;
       left: 0;
       top: 0;

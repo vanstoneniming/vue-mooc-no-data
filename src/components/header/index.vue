@@ -3,9 +3,9 @@
     <div class="container-fluid px-0">
       <a class="navbar-brand" href="/home">
         <img
-          alt="课·视频 ke.video"
+          :alt="altInfo"
           class="navbar-logo"
-          src="@/assets/images/login/signlogo.png"
+        :src="require(`@/assets/images/login/${logo}`)"
         />
       </a>
       <button aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"
@@ -94,7 +94,9 @@ import HeaderLoginArea from './modules/loginArea.vue'
 import { useRouter } from 'vue-router'
 import router from '@/router'
 const currentNav = ref('') // 用于跟踪当前选中的导航项
-
+const currentDomain = window.location.hostname.replace('www.', '')
+const logo = currentDomain === 'ke.video' ? 'signlogo.png' : 'ti_video_logo.png'
+const altInfo = currentDomain === 'ke.video' ? '课·视频 ke.video' : '题·视频 ti.video'
 defineComponent({
   name: 'Header',
   components: {

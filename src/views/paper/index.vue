@@ -1,11 +1,13 @@
 <template>
   <div class="home">
+<div v-if="false">
     <dict-code-select :bind="platform" :options="platformOptions" placeholder="请选择平台"></dict-code-select>
     <dict-code-select :bind="subject" :options="subjectOptions" placeholder="请选择学科"></dict-code-select>
     <dict-code-select :bind="edition" :options="editionOptions" placeholder="请选择版本"></dict-code-select>
     <dict-code-select :bind="period" :options="periodOptions" placeholder="请选择学段"></dict-code-select>
     <dict-code-select :bind="grade" :options="gradeOptions" placeholder="请选择年级"></dict-code-select>
     <dict-code-select :bind="term" :options="termOptions" placeholder="请选择学期"></dict-code-select>
+</div>
     <div v-show="ceciList.length==0">
         <el-empty description="暂无数据" :image-size="300"/>
     </div>

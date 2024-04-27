@@ -1,6 +1,6 @@
 <template>
   <el-button :icon="Download" size="small" type="primary" @click="visible = true">下载附件</el-button>
-  <el-dialog v-model="visible" :show-close="false" draggable class="file-down-dialog">
+  <el-dialog v-model="visible" :show-close="false" draggable>
     <template #header="{ close, titleId, titleClass }">
       <div class="my-header">
         <h4 :id="titleId" :class="titleClass">{{ item.paperfile.length }}个附件可以下载</h4>
@@ -14,11 +14,11 @@
     </template>
     <el-divider></el-divider>
     <div class="button-row">
-        <div class="space-center" v-for="(item, key) in dataList" :key="key">
-          <el-tag effect="dark">{{ key + 1 }}</el-tag>
-          <el-link :href="item.url" type="primary">{{ shortenText(item.name, 40) }}</el-link>
-          <el-tag type="info">{{ formatFileSize(item.size) }}</el-tag>
-        </div>
+      <div v-for="(item, key) in dataList" :key="key" class="file-info">
+        <el-tag class="file-index" effect="dark">{{ key + 1 }}</el-tag>
+        <el-link :href="item.url" class="file-name" type="primary">{{ shortenText(item.name, 40) }}</el-link>
+        <el-tag class="file-size" type="info">{{ formatFileSize(item.size) }}</el-tag>
+      </div>
     </div>
   </el-dialog>
 </template>
@@ -39,7 +39,6 @@ const props = defineProps<{ item: PaperConfig }>() // Define props and assign to
 async function paperFiles () {
   try {
     const idsString = props.item.paperfile.join(',')
-    console.log(idsString)
     const { code, result: data } = await getPaperFile(idsString)
     if (code === ERR_SUCCESS && data) {
       dataList.value = data
@@ -74,10 +73,22 @@ watch(() => props.item.paperfile, () => {
   gap: 10px; /* Set spacing between items */
 }
 
-.space-center {
+.file-info {
   display: flex;
-  justify-content: space-between; /* Items are distributed evenly along the main axis */
-  align-items: center; /* Items are vertically centered */
+  justify-content: flex-start; /* 左对齐 */
+  align-items: center; /* 垂直居中 */
+}
+
+.file-index {
+  margin-right: 10px; /* 可以调整索引和文件名之间的间距 */
+}
+
+.file-name {
+  margin-right: 10px; /* 可以调整文件名和文件大小之间的间距 */
+}
+
+.file-size {
+  margin-left: auto; /* 文件大小右对齐 */
 }
 
 </style>

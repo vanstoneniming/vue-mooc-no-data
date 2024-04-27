@@ -24,6 +24,7 @@ export interface CourseConfig {
 export interface QuestionrowConfig {
   id: number;
   qrquestion: string;
+  isExpanded: boolean;
 }
 export interface QuestionConfig {
   id: number;

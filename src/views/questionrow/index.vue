@@ -1,28 +1,37 @@
 <template>
   <div class="home">
-    <dict-code-select v-model="platform" :options="platformOptions" placeholder="请选择平台"></dict-code-select>
-    <dict-code-select v-model="subject" :options="subjectOptions" placeholder="请选择学科"></dict-code-select>
-    <dict-code-select v-model="edition" :options="editionOptions" placeholder="请选择版本"></dict-code-select>
-    <dict-code-select v-model="period" :options="periodOptions" placeholder="请选择学段"></dict-code-select>
-    <dict-code-select v-model="grade" :options="gradeOptions" placeholder="请选择年级"></dict-code-select>
-    <dict-code-select v-model="term" :options="termOptions" placeholder="请选择学期"></dict-code-select>
+    <div v-if="false">
+        <dict-code-select v-model="platform" :options="platformOptions" placeholder="请选择平台"></dict-code-select>
+        <dict-code-select v-model="subject" :options="subjectOptions" placeholder="请选择学科"></dict-code-select>
+        <dict-code-select v-model="edition" :options="editionOptions" placeholder="请选择版本"></dict-code-select>
+        <dict-code-select v-model="period" :options="periodOptions" placeholder="请选择学段"></dict-code-select>
+        <dict-code-select v-model="grade" :options="gradeOptions" placeholder="请选择年级"></dict-code-select>
+        <dict-code-select v-model="term" :options="termOptions" placeholder="请选择学期"></dict-code-select>
+    </div>
     <div v-show="ceciList.length==0">
       <el-empty :image-size="300" description="暂无数据"/>
     </div>
     <ul class="ceci-list">
       <li v-for="(item, index) in ceciList" :key="index">
-        <div>
-          <div class="header-content">
+        <div class="row-sticky-top">
+          <div :class="{ expanded: item.isExpanded }" class="header-content">
             <el-tag effect="dark" round type="success">{{ index + 1 }}</el-tag>
             <div class="ceci-item" v-html="sanitizeHTML(item.qrquestion)"></div>
           </div>
+          <el-divider @click="toggleContent(item)">
+            <div v-if="item.isExpanded">折叠
+              <CaretTop/>
+            </div>
+            <div v-else>展开
+              <CaretRight/>
+            </div>
+          </el-divider>
         </div>
         <div v-for="(question, qIndex) in filteredQuestions(item.id)" :key="qIndex">
           <question-detail :index="getQuestionNo(qIndex)" :item="question"/>
         </div>
       </li>
     </ul>
-
   </div>
   <div class="pagination">
     <el-pagination
@@ -84,6 +93,10 @@ export default defineComponent({
       return qindex + 1
     }
 
+    function toggleContent (item: QuestionrowConfig) {
+      item.isExpanded = !item.isExpanded
+    }
+
     async function fetchData () {
       try {
         const { code, result: { items: data, total } } = await getQuestionrow({
@@ -131,6 +144,7 @@ export default defineComponent({
         return []
       }
     }
+
     onMounted(() => {
       bus.on('keywordChange', (event) => {
         searchKeyword.value = event as string
@@ -175,6 +189,7 @@ export default defineComponent({
       term,
       termOptions,
       getQuestionNo,
+      toggleContent,
       filteredQuestions
     }
   }
@@ -187,17 +202,35 @@ export default defineComponent({
   margin: 10px;
 }
 
+.row-sticky-top {
+  position: sticky;
+  top: 78px;
+  background-color: white;
+}
+
 .header-content {
   display: flex;
+  max-height: 100px; /* 设置最大高度为屏幕显示区域的50% */
+  overflow: hidden; /* 超出部分隐藏 */
+  transition: max-height 0.3s ease; /* 添加过渡效果 */
+}
+
+.expanded {
+  max-height: none; /* 展开时取消最大高度限制 */
+}
+
+.el-divider div {
+  color: #2688E8;
+  width: 50px;
+  white-space: nowrap;
+  display: inline-flex; /* 将div元素设为行内块 */
+  align-items: center; /* 垂直居中 */
+  margin-right: 5px; /* 右边距 */
 }
 
 .el-tag {
   margin-right: 8px;
   margin-left: 15px;
-}
-
-.el-card {
-  margin: 20px 0;
 }
 
 .ceci-list {

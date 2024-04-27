@@ -22,7 +22,7 @@
 
       <!-- 底部版权 -->
       <p class="footer-copyright">
-        <span>© 2024 ke.video 京ICP备05035325号-7 </span>
+        <span>© 2024 {{ currentDomain }} {{ recordNumber }} </span>
       </p>
     </div>
   </div>
@@ -84,13 +84,15 @@ export default defineComponent({
   components: { MoocSidebar },
   setup () {
     const linkList = ref<FooterLinkConfig[]>([])
+    const currentDomain = window.location.hostname.replace('www.', '')
+    const recordNumber = currentDomain === 'ke.video' ? '京ICP备05035325号-7' : '京ICP备05035325号-6'
     onBeforeMount(async () => {
       const { code, data } = await getFooterLink()
       if (code === ERR_OK && data) {
         linkList.value = data
       }
     })
-    return { linkList }
+    return { linkList, currentDomain, recordNumber }
   }
 })
 </script>
