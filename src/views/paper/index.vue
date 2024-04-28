@@ -27,8 +27,8 @@
         <el-empty :image-size="300" description="暂无数据"/>
       </div>
       <ul class="ceci-list">
-        <li v-for="(item, index) in ceciList" :key="index" @click="preview(item)">
-          <PaperFromDetail :index="index+1" :item="item"/>
+        <li v-for="(item, index) in ceciList" :key="index" @click="preview(item, index)" :class="{ 'selected': index === selectedIndex }">
+          <PaperFromDetail :index="index+1" :item="item" />
         </li>
       </ul>
     </el-aside>
@@ -65,6 +65,10 @@
   width: 100%; /* 让所有的 li 高度自动撑满 */
   background-color: aliceblue;
   border-radius: 3px;
+}
+
+li.selected{
+  background-color: #a0cfff;
 }
 
 .pagination {
@@ -145,6 +149,7 @@ export default defineComponent({
     const term = ref('')
     const termOptions = ref<CodeOptionsConfig[]>([])
     const currentPaper = ref<PaperConfig | null>(null)
+    const selectedIndex = ref(0)
 
     async function fetchData () {
       try {
@@ -164,14 +169,16 @@ export default defineComponent({
         if (code === ERR_SUCCESS && data) {
           dataList.value = data
           totalSize.value = total
-          currentPaper.value = data ? data[0] : null
+          currentPaper.value = data[0]
+          selectedIndex.value = 0
         }
       } catch (error) {
         console.error('Error fetching data:', error)
       }
     }
 
-    async function preview (item: PaperConfig | null) {
+    async function preview (item: PaperConfig | null, index: number) {
+      selectedIndex.value = index
       currentPaper.value = item
     }
 
@@ -237,7 +244,8 @@ export default defineComponent({
       grade,
       gradeOptions,
       term,
-      termOptions
+      termOptions,
+      selectedIndex
     }
   }
 })

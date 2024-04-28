@@ -26,10 +26,6 @@ defineProps({
   index: {
     type: Number,
     required: true
-  },
-  titleList: {
-    type: Object,
-    required: true
   }
 })
 </script>

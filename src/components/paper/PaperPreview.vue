@@ -21,7 +21,7 @@
         :src="splitPreviewImages(item)[0]"
         :zoom-rate="1.2"
         fit="cover"
-        hide-on-click-modal="true"
+        :hide-on-click-modal="true"
       />
     </el-aside>
     <el-main>

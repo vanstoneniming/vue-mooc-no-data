@@ -5,7 +5,7 @@
       <h6 class="fix-width-360">{{ item.papername }}</h6>
       <el-divider content-position="left">快速功能</el-divider>
       <div class="flex items-center">
-        <DownFile v-if="userInfo.id" :item="item" :isPrimary="true"/>
+        <DownFile v-if="userInfo.id" :item="item" :isPrimary="true" />
         <el-switch v-model="showImg" active-text="显示图片" inactive-text="隐藏图片"
                    inline-prompt size="large"></el-switch>
       </div>
