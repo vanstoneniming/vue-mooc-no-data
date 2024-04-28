@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <div class="top-sticky">
+    <div>
       <dict-code-select v-model="platform" :options="platformOptions" placeholder="请选择平台"></dict-code-select>
       <dict-code-select v-model="subject" :options="subjectOptions" placeholder="请选择学科"></dict-code-select>
       <dict-code-select v-model="edition" :options="editionOptions" placeholder="请选择版本"></dict-code-select>
@@ -39,13 +39,6 @@
 
 .home {
   margin: 10px;
-}
-
-.top-sticky {
-  background-color: white;
-  position: sticky;
-  top: 78px;
-  margin-top: -15px;
 }
 
 .ceci-list {

@@ -1,40 +1,48 @@
 <template>
-  <div class="home">
-<div v-if="false">
+<div class="home">
+  <div v-if="false">
     <dict-code-select :bind="platform" :options="platformOptions" placeholder="请选择平台"></dict-code-select>
     <dict-code-select :bind="subject" :options="subjectOptions" placeholder="请选择学科"></dict-code-select>
     <dict-code-select :bind="edition" :options="editionOptions" placeholder="请选择版本"></dict-code-select>
     <dict-code-select :bind="period" :options="periodOptions" placeholder="请选择学段"></dict-code-select>
     <dict-code-select :bind="grade" :options="gradeOptions" placeholder="请选择年级"></dict-code-select>
     <dict-code-select :bind="term" :options="termOptions" placeholder="请选择学期"></dict-code-select>
+  </div>
+  <el-container>
+    <el-aside>
+      <div class="pagination">
+        <el-pagination
+          v-model:current-page="currentPage"
+          v-model:page-size="pageSize"
+          :hide-on-single-page=true
+          :page-sizes="[12, 24, 36, 48, 60]"
+          :total="totalSize"
+          layout="prev, pager, next"
+          next-text="下一页"
+          prev-text="上一页"
+          small
+        />
+      </div>
+      <div v-show="ceciList.length==0">
+        <el-empty :image-size="300" description="暂无数据"/>
+      </div>
+      <ul class="ceci-list">
+        <li v-for="(item, index) in ceciList" :key="index" @click="preview(item)">
+          <PaperFromDetail :index="index+1" :item="item"/>
+        </li>
+      </ul>
+    </el-aside>
+    <el-main>
+      <div v-if="currentPaper">
+        <paper-preview :item="currentPaper"/>
+      </div>
+      <div v-else>暂无数据展示</div>
+    </el-main>
+  </el-container>
 </div>
-    <div v-show="ceciList.length==0">
-        <el-empty description="暂无数据" :image-size="300"/>
-    </div>
-    <ul class="ceci-list">
-      <li v-for="(item, index) in ceciList" :key="index">
-        <PaperFromDetail :item="item" :index="index+1"/>
-      </li>
-    </ul>
-  </div>
-  <div class="pagination">
-    <el-pagination
-      v-model:current-page="currentPage"
-      v-model:page-size="pageSize"
-      :total="totalSize"
-      next-text="下一页"
-      prev-text="上一页"
-      small
-      :page-sizes="[12, 24, 36, 48, 60]"
-      :hide-on-single-page=true
-      layout="sizes, prev, pager, next"
-    />
-  </div>
 </template>
 
 <style scoped>
-@import '~@/assets/styles/responsive.scss';
-
 .home {
   margin: 10px;
 }
@@ -45,22 +53,62 @@
   list-style-type: none;
   padding: 0;
   justify-content: left;
+  margin: 3px 0;
 }
 
 .ceci-list li {
-  margin: 10px;
-  padding: 10px;
+  margin: 3px 6px;
+  padding: 5px 10px;
   box-sizing: border-box;
   text-align: left;
   cursor: grab;
   width: 100%; /* 让所有的 li 高度自动撑满 */
-  background-color: #f3f5f7;
+  background-color: aliceblue;
+  border-radius: 3px;
 }
 
 .pagination {
   margin: 10px;
   display: flex;
   justify-content: center;
+}
+
+.el-container {
+  display: flex;
+  flex-direction: row;
+}
+
+.el-main {
+  flex: 1;
+  margin-left: 360px;
+}
+
+.el-aside {
+  margin: 0;
+  padding: 0;
+  width: 360px;
+  position: fixed;
+  border-radius: 5px;
+  background-color: orange;
+}
+
+/* 小屏幕下的样式 */
+@media screen and (max-width: 1300px) {
+  .el-container {
+    display: flex;
+    flex-direction: column; /* 设置为垂直方向排列 */
+  }
+
+  .el-main {
+    margin: 10px 0;
+    display: flex;
+    padding: 5px 0;
+  }
+
+  .el-aside {
+    width: 100%;
+    position: relative;
+  }
 }
 </style>
 
@@ -73,10 +121,11 @@ import bus from '@/utils/bus'
 import DictCodeSelect from '@/components/ceci/DictCodeSelect.vue'
 import { ElPagination } from 'element-plus/lib/components'
 import PaperFromDetail from '@/components/paper/ListDetail.vue'
+import PaperPreview from '@/components/paper/PaperPreview.vue'
 
 export default defineComponent({
   name: 'Paper',
-  components: { PaperFromDetail, ElPagination, DictCodeSelect },
+  components: { PaperPreview, PaperFromDetail, ElPagination, DictCodeSelect },
   setup () {
     const dataList = ref<PaperConfig[]>([])
     const currentPage = ref<number>(1)
@@ -95,6 +144,7 @@ export default defineComponent({
     const gradeOptions = ref<CodeOptionsConfig[]>([])
     const term = ref('')
     const termOptions = ref<CodeOptionsConfig[]>([])
+    const currentPaper = ref<PaperConfig | null>(null)
 
     async function fetchData () {
       try {
@@ -114,10 +164,15 @@ export default defineComponent({
         if (code === ERR_SUCCESS && data) {
           dataList.value = data
           totalSize.value = total
+          currentPaper.value = data ? data[0] : null
         }
       } catch (error) {
         console.error('Error fetching data:', error)
       }
+    }
+
+    async function preview (item: PaperConfig | null) {
+      currentPaper.value = item
     }
 
     async function fetchDictCode (dictCode: string) {
@@ -165,6 +220,8 @@ export default defineComponent({
 
     return {
       ceciList: dataList,
+      preview,
+      currentPaper,
       currentPage,
       pageSize,
       totalSize,

@@ -1,14 +1,10 @@
 <template>
   <div class="home">
     <ul class="ceci-list">
-
         <paper-page :item="paperData"></paper-page>
-
     </ul>
   </div>
-
 </template>
-
 <style scoped>
 @import '~@/assets/styles/responsive.scss';
 

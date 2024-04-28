@@ -11,21 +11,23 @@
           </el-col>
         </div>
       </template>
-      <el-row class="center-row">
-        <el-col :span="5">
-          <el-statistic :value="ceciCount" title="册次数量"/>
-        </el-col>
-        <el-col :span="5">
-          <el-statistic :value="courseCount" title="课程数量"/>
-        </el-col>
-        <el-col :span="7">
-          <el-statistic :value="resourceCount" title="资源数量"/>
-        </el-col>
-        <el-col :span="7">
-          <el-statistic :value="resourceUrlCount" title="链接数量"/>
-        </el-col>
-      </el-row>
-      <el-divider/>
+      <div>
+        <el-row class="center-row">
+          <el-col :span="5">
+            <el-statistic :value="ceciCount" title="册次数量"/>
+          </el-col>
+          <el-col :span="5">
+            <el-statistic :value="courseCount" title="课程数量"/>
+          </el-col>
+          <el-col :span="7">
+            <el-statistic :value="resourceCount" title="资源数量"/>
+          </el-col>
+          <el-col :span="7">
+            <el-statistic :value="resourceUrlCount" title="链接数量"/>
+          </el-col>
+        </el-row>
+        <el-divider/>
+      </div>
       <div>
         <ul>
           <li>
@@ -125,6 +127,7 @@
 import { onMounted, ref } from 'vue'
 import { getDataCount } from '@/api/common'
 import { ERR_SUCCESS } from '@/api/config'
+import DictCodeSelect from '@/components/ceci/DictCodeSelect.vue'
 
 const ceciCount = ref(0)
 const resourceUrlCount = ref(0)
@@ -155,6 +158,8 @@ onMounted(() => {
 
 .home {
   margin: 10px 20px;
+  position: relative; /* 确保 z-index 生效 */
+  z-index: -1; /* 设置为较低的值，例如 1 */
 }
 
 .el-col {

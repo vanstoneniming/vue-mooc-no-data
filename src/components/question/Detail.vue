@@ -1,16 +1,15 @@
 <template>
   <el-card>
-    <div class="header-content">
-      <el-tag round type="info">{{ index }}</el-tag>
-      <div class="quest-title" v-html="sanitizeHTML(item.question)"></div>
+    <div class="item-body">
+      <div class="header-content">
+        <el-tag round type="info">{{ index }}</el-tag>
+        <div class="quest-title" v-html="sanitizeHTML(item.question)"></div>
+      </div>
+      <div class="quest-select" v-html="sanitizeHTML(item.questionselect)"></div>
+      <div v-if="showAnswer" class="quest-answer"><span v-html="`答案：${item.questionanswer}`"></span>
+        <div class="quest-describe" v-html="sanitizeHTML(item.questiondescribe)"></div>
+      </div>
     </div>
-
-        <div class="quest-select" v-html="sanitizeHTML(item.questionselect)"></div>
-
-        <div v-if="showAnswer" class="quest-answer"><span v-html="`答案：${item.questionanswer}`"></span>
-          <div class="quest-describe" v-html="sanitizeHTML(item.questiondescribe)"></div>
-        </div>
-
     <template #footer>
       <div class="right-align">
         <el-button class="answer-button" title="查看答案和解析" @click="toggleAnswer">查看答案
@@ -44,6 +43,11 @@ function toggleAnswer () {
 <style scoped>
 .header-content {
   display: flex; /* Use flexbox to align elements in a row */
+}
+
+.item-body {
+  height: 220px;
+  overflow: auto;
 }
 
 .el-tag {
@@ -89,7 +93,7 @@ function toggleAnswer () {
 }
 
 .quest-select{
-  margin-left: 20px;
+  margin-left: 40px;
 }
 /* Style for description */
 .quest-describe {
@@ -101,4 +105,11 @@ function toggleAnswer () {
   display: flex;
   justify-content: right;
 }
+
+@media screen and (max-width: 768px) {
+  .item-body {
+    height: fit-content;
+  }
+}
+
 </style>

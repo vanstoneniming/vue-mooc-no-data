@@ -48,13 +48,12 @@
 }
 
 .ceci-list li {
-  margin: 10px;
+  margin: 0;
   padding: 10px;
   box-sizing: border-box;
   text-align: left;
   cursor: grab;
-  width: 100%; /* 让所有的 li 高度自动撑满 */
-  background-color: #f3f5f7;
+  width: 33%; /* 让所有的 li 高度自动撑满 */
 }
 
 .ceci-item {
@@ -75,12 +74,16 @@
   color: #E22D2D;
 }
 
-/* Style for description */
-
 .pagination {
   margin: 10px;
   display: flex;
   justify-content: center;
+}
+
+@media screen and (max-width: 768px) {
+  .ceci-list li {
+    width: 100%;
+  }
 }
 </style>
 

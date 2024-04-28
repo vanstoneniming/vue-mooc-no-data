@@ -1,12 +1,12 @@
 <template>
   <div class="home">
     <div v-if="false">
-        <dict-code-select v-model="platform" :options="platformOptions" placeholder="请选择平台"></dict-code-select>
-        <dict-code-select v-model="subject" :options="subjectOptions" placeholder="请选择学科"></dict-code-select>
-        <dict-code-select v-model="edition" :options="editionOptions" placeholder="请选择版本"></dict-code-select>
-        <dict-code-select v-model="period" :options="periodOptions" placeholder="请选择学段"></dict-code-select>
-        <dict-code-select v-model="grade" :options="gradeOptions" placeholder="请选择年级"></dict-code-select>
-        <dict-code-select v-model="term" :options="termOptions" placeholder="请选择学期"></dict-code-select>
+      <dict-code-select v-model="platform" :options="platformOptions" placeholder="请选择平台"></dict-code-select>
+      <dict-code-select v-model="subject" :options="subjectOptions" placeholder="请选择学科"></dict-code-select>
+      <dict-code-select v-model="edition" :options="editionOptions" placeholder="请选择版本"></dict-code-select>
+      <dict-code-select v-model="period" :options="periodOptions" placeholder="请选择学段"></dict-code-select>
+      <dict-code-select v-model="grade" :options="gradeOptions" placeholder="请选择年级"></dict-code-select>
+      <dict-code-select v-model="term" :options="termOptions" placeholder="请选择学期"></dict-code-select>
     </div>
     <div v-show="ceciList.length==0">
       <el-empty :image-size="300" description="暂无数据"/>
@@ -27,8 +27,10 @@
             </div>
           </el-divider>
         </div>
-        <div v-for="(question, qIndex) in filteredQuestions(item.id)" :key="qIndex">
-          <question-detail :index="getQuestionNo(qIndex)" :item="question"/>
+        <div class="question-card">
+          <div class="card-item" v-for="(question, qIndex) in filteredQuestions(item.id)" :key="qIndex">
+            <question-detail :index="getQuestionNo(qIndex)" :item="question"/>
+          </div>
         </div>
       </li>
     </ul>
@@ -203,9 +205,20 @@ export default defineComponent({
 }
 
 .row-sticky-top {
+  padding-top: 25px;
   position: sticky;
-  top: 78px;
+  top: 70px;
   background-color: white;
+}
+
+.question-card {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.card-item {
+  padding: 10px;
+  width: 33%;
 }
 
 .header-content {
@@ -282,5 +295,12 @@ p img {
   margin: 10px;
   display: flex;
   justify-content: center;
+}
+
+/* 小屏幕下的样式 */
+@media screen and (max-width: 768px) {
+  .card-item {
+    width: 100%;
+  }
 }
 </style>

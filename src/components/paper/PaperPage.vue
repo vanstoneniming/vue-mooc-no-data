@@ -2,7 +2,13 @@
   <div class="content-row">
     <div class="image-preview">
       <el-divider content-position="left">试卷名称</el-divider>
-      <h6 class="fix-width-360"> {{ item.papername }} </h6>
+      <h6 class="fix-width-360">{{ item.papername }}</h6>
+      <el-divider content-position="left">快速功能</el-divider>
+      <div class="flex items-center">
+        <DownFile v-if="userInfo.id" :item="item" :isPrimary="true"/>
+        <el-switch v-model="showImg" active-text="显示图片" inactive-text="隐藏图片"
+                   inline-prompt size="large"></el-switch>
+      </div>
       <el-divider content-position="left">全卷预览</el-divider>
       <el-image
         v-if="splitPreviewImages(item)[0]"
@@ -15,16 +21,6 @@
         fit="cover"
         hide-on-click-modal="true"
       />
-      <el-divider content-position="left">快速功能</el-divider>
-      <div class="flex items-center">
-        <el-button @click="goBack">
-          <el-icon class="el-icon--left">
-            <Back/>
-          </el-icon>返回上页</el-button>
-        <DownFile v-if="userInfo.id" :item="item"/>
-        <el-switch v-model="showImg" active-text="显示图片" inactive-text="隐藏图片"
-                   inline-prompt size="large"></el-switch>
-      </div>
     </div>
     <div class="text-content">
       <el-divider content-position="right">试卷主体</el-divider>
@@ -35,7 +31,6 @@
 <script lang="ts" setup>
 import { sanitizeHTML } from '@/hooks/utils/helper'
 import { PaperConfig } from '@/types'
-import router from '@/router'
 import { defineComponent, defineProps, ref, watch, computed } from 'vue' // Import defineProps directly from 'vue'
 import DownFile from '@/components/paper/DownFile.vue'
 import { useStore } from 'vuex'
@@ -48,10 +43,6 @@ const content = ref('')
 const userInfo = computed(() => {
   return store.getters.userInfo
 })
-
-function goBack () {
-  router.go(-1)
-}
 
 function splitPreviewImages (item: PaperConfig) {
   return item && item.previewimages ? item.previewimages.split(',') : []
@@ -83,6 +74,7 @@ defineComponent({
 
 .image-preview .el-image {
   width: 100%;
+  border-radius: 3px;
 }
 
 .button-row .el-button {
@@ -97,8 +89,8 @@ defineComponent({
 }
 
 .fix-width-360 {
-  padding-left: 10px;
-  width: 306px;
+  padding-left: 40px;
+  width: 100vh;
   flex-wrap: wrap;
   line-height: 1.5em;
   color: #337ecc;

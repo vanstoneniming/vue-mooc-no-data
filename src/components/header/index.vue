@@ -43,7 +43,6 @@
 <style lang="scss" scoped>
 .navbar {
   height: 70px;
-
   .navbar-brand {
     display: flex;
     align-items: center; /* 水平对齐Logo和文本 */

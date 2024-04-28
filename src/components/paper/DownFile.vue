@@ -1,5 +1,5 @@
 <template>
-  <el-button :icon="Download" size="small" type="primary" @click="visible = true">下载附件</el-button>
+  <el-button :icon="Download" @click="visible = true" :type="isPrimary ? 'primary' : ''">下载附件</el-button>
   <el-dialog v-model="visible" :show-close="false" draggable>
     <template #header="{ close, titleId, titleClass }">
       <div class="my-header">
@@ -32,9 +32,9 @@ import { ERR_SUCCESS } from '@/api/config'
 import { formatFileSize, shortenText } from '@/hooks/utils/helper'
 
 const visible = ref(false)
-const dataList = ref([])
+const dataList = ref<PaperConfig[]>([])
 
-const props = defineProps<{ item: PaperConfig }>() // Define props and assign to variable
+const props = defineProps<{ item: PaperConfig; isPrimary: boolean }>() // Define props and assign to variable
 
 async function paperFiles () {
   try {
@@ -49,8 +49,8 @@ async function paperFiles () {
 }
 
 watch(() => props.item.paperfile, () => {
-  paperFiles() // Call paperFiles function to fetch paper files when component is mounted
-})
+  paperFiles()
+}, { immediate: true })
 </script>
 
 <style scoped>

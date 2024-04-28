@@ -53,6 +53,7 @@ export default defineComponent({
       box-shadow: $box-shadow-normal;
     }
     &-main {
+      z-index: 0;
       flex: auto;
     }
     &-footer {
