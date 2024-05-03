@@ -86,7 +86,6 @@ import { getQuestion } from '@/api/common'
 import { ERR_SUCCESS } from '@/api/config'
 import { ElPagination } from 'element-plus/lib/components'
 import { QuestionConfig } from '@/types'
-import DictCodeSelect from '@/components/common/DictCodeSelect.vue'
 import QuestionDetail from '@/components/question/Detail.vue'
 import SelectOptions from '@/components/common/SelectOptions.vue'
 
