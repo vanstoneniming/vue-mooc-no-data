@@ -18,28 +18,22 @@
     </template>
   </el-card>
 </template>
-<script lang="ts" setup>
-import { ref } from 'vue'
+<script lang="ts" setup name="QuestionDetail">
+import { ref, defineProps } from 'vue'
 import { sanitizeHTML } from '@/hooks/utils/helper'
 
-// 定义 props
-// eslint-disable-next-line no-undef
-const props = defineProps({
+defineProps({
   item: Object,
   index: Number
 })
 
-// 如果有响应式状态，可以使用 ref 或 reactive 创建
 const showAnswer = ref(false)
 
-// 如果有方法，直接定义
 function toggleAnswer () {
-  // 方法逻辑
   showAnswer.value = !showAnswer.value
 }
-
-// 由于 sanitizeHTML 是从外部导入的，我们直接可以在模板中使用它
 </script>
+
 <style scoped>
 .header-content {
   display: flex; /* Use flexbox to align elements in a row */

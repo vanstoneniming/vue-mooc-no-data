@@ -12,26 +12,26 @@
     </LayoutFooter>
   </div>
 </template>
-<script lang="ts">
-import { defineComponent, toRefs } from 'vue'
+<script lang="ts" setup name="Layout">
+import { defineComponent, provide, ref, toRefs } from 'vue'
 import { useRoute } from 'vue-router'
 import LayoutHeader from './header/index.vue'
 import LayoutMain from './main/index.vue'
+import MoocFooter from '@/components/footer/index.vue'
 import LayoutFooter from './footer/index.vue'
 import MoocHeader from '@/components/header/index.vue'
-import MoocFooter from '@/components/footer/index.vue'
-export default defineComponent({
-  name: 'Layout',
+const { meta } = toRefs(useRoute())
+const searchKeyword = ref('')
+
+provide('searchKeyword', { searchKeyword })
+
+defineComponent({
   components: {
     LayoutHeader,
     LayoutMain,
     LayoutFooter,
     MoocHeader,
     MoocFooter
-  },
-  setup () {
-    const { meta } = toRefs(useRoute())
-    return { meta }
   }
 })
 </script>

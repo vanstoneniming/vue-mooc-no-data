@@ -1,57 +1,46 @@
 <template>
-  <div class="d-flex align-items-center">
-    <input v-model="keyword"
-           class="form-control me-2 form-control"
-           placeholder="输入关键词..."
-           type="text"
-           @blur="isFocus = false"
-           @focus="isFocus = true"
-           @keyup.enter="handleKeywordChange"
+  <div>
+    <el-input
+      v-model="keyword"
+      class="input-with-select"
+      placeholder="输入关键词..."
+      @keyup.enter="handleKeywordChange"
+      clearable
     >
-    <div class="search-icon" @click="handleKeywordChange">
-      <i class="iconfont icon-search"></i>
-    </div>
+      <template v-if="false" #prepend>
+        <el-select v-model="select" placeholder="Select" style="width: 100px" clearable>
+          <el-option label="册次" value="1"/>
+          <el-option label="课程" value="2"/>
+          <el-option label="题帽" value="3"/>
+          <el-option label="试题" value="4"/>
+          <el-option label="试卷" value="5"/>
+        </el-select>
+      </template>
+      <template #append>
+        <el-icon type="button" @click="handleKeywordChange">
+          <Search/>
+        </el-icon>
+      </template>
+    </el-input>
   </div>
-
 </template>
-<script lang="ts">
 
-import { defineComponent, ref } from 'vue'
-import bus from '@/utils/bus'
+<script lang="ts" setup name="HeaderSearch">
+import { inject, ref } from 'vue'
 
-export default defineComponent({
-  name: 'HeaderSearch',
-  setup () {
-    const keyword = ref('')
-    const isFocus = ref(false)
+const keyword = ref('')
+const select = ref('')
+const { searchKeyword } = inject('searchKeyword', { searchKeyword: ref('') })
 
-    function handleKeywordChange () {
-      bus.emit('keywordChange', keyword.value)
-    }
-
-    return { keyword, isFocus, handleKeywordChange }
-  }
-})
+function handleKeywordChange () {
+  searchKeyword.value = keyword.value
+}
 </script>
 <style lang="scss" scoped>
-.d-flex {
-  position: relative; /* 设置相对定位 */
-  display: flex;
+.el-input {
+  width: 320px;
 }
-
-.align-items-center {
-  align-items: center;
-}
-
-.search-icon {
-  cursor: pointer;
-  position: absolute; /* 设置绝对定位 */
-  right: 15px; /* 调整图标与输入框的距离 */
-  top: 50%; /* 垂直居中 */
-  transform: translateY(-50%); /* 垂直居中 */
-}
-
-.form-control {
-  padding-right: 30px; /* 给输入框增加右边距以容纳图标 */
+.input-with-select .el-input-group__prepend {
+  background-color: var(--el-fill-color-blank);
 }
 </style>

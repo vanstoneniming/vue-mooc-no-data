@@ -1,18 +1,11 @@
 <template>
   <div class="home">
-<div  v-if="false">
-    <dict-code-select v-model="platform" :options="platformOptions" placeholder="请选择平台"></dict-code-select>
-    <dict-code-select v-model="subject" :options="subjectOptions" placeholder="请选择学科"></dict-code-select>
-    <dict-code-select v-model="edition" :options="editionOptions" placeholder="请选择版本"></dict-code-select>
-    <dict-code-select v-model="period" :options="periodOptions" placeholder="请选择学段"></dict-code-select>
-    <dict-code-select v-model="grade" :options="gradeOptions" placeholder="请选择年级"></dict-code-select>
-    <dict-code-select v-model="term" :options="termOptions" placeholder="请选择学期"></dict-code-select>
-  </div>
-    <div v-show="ceciList.length==0">
+    <select-options codes-in="period,subject" :multiple="false" ref="singleSelect"/>
+    <div v-show="dataList.length === 0">
         <el-empty description="暂无数据" :image-size="300"/>
     </div>
     <ul class="ceci-list">
-      <li v-for="(item, index) in ceciList" :key="index">
+      <li v-for="(item, index) in dataList" :key="index">
         <question-detail :item="item" :index="index+1"/>
       </li>
     </ul>
@@ -87,125 +80,51 @@
 }
 </style>
 
-<script lang="ts">
-import { defineComponent, onBeforeMount, onMounted, onUnmounted, ref, watch } from 'vue'
-import { getDictCode, getQuestion } from '@/api/common'
-import { CodeOptionsConfig, QuestionConfig } from '@/types'
+<script setup lang="ts" name="Question">
+import { defineComponent, ref, inject, watchEffect } from 'vue'
+import { getQuestion } from '@/api/common'
 import { ERR_SUCCESS } from '@/api/config'
-import bus from '@/utils/bus'
-import DictCodeSelect from '@/components/ceci/DictCodeSelect.vue'
 import { ElPagination } from 'element-plus/lib/components'
+import { QuestionConfig } from '@/types'
+import DictCodeSelect from '@/components/common/DictCodeSelect.vue'
 import QuestionDetail from '@/components/question/Detail.vue'
+import SelectOptions from '@/components/common/SelectOptions.vue'
 
-export default defineComponent({
-  name: 'Question',
-  components: { QuestionDetail, ElPagination, DictCodeSelect },
-  setup () {
-    const dataList = ref<QuestionConfig[]>([])
-    const currentPage = ref<number>(1)
-    const pageSize = ref<number>(12)
-    const totalSize = ref<number>(0)
-    const searchKeyword = ref('')
-    const platform = ref('')
-    const platformOptions = ref<CodeOptionsConfig[]>([])
-    const subject = ref('')
-    const subjectOptions = ref<CodeOptionsConfig[]>([])
-    const edition = ref('')
-    const editionOptions = ref<CodeOptionsConfig[]>([])
-    const period = ref('')
-    const periodOptions = ref<CodeOptionsConfig[]>([])
-    const grade = ref('')
-    const gradeOptions = ref<CodeOptionsConfig[]>([])
-    const term = ref('')
-    const termOptions = ref<CodeOptionsConfig[]>([])
+const dataList = ref<QuestionConfig[]>([])
+const currentPage = ref<number>(1)
+const pageSize = ref<number>(12)
+const totalSize = ref<number>(0)
 
-    async function fetchData () {
-      try {
-        const { code, result: { items: data, total } } = await getQuestion({
-          params: {
-            page: currentPage.value,
-            pageSize: pageSize.value,
-            question: searchKeyword.value,
-            questionrow: 0,
-            platform: platform.value,
-            term: term.value,
-            period: period.value,
-            grade: grade.value,
-            edition: edition.value,
-            subject: subject.value
-          }
-        })
-        if (code === ERR_SUCCESS && data) {
-          dataList.value = data
-          totalSize.value = total
-        }
-      } catch (error) {
-        console.error('Error fetching data:', error)
+const { searchKeyword } = inject('searchKeyword', { searchKeyword: ref('') })
+const singleSelect = ref()
+
+async function fetchData () {
+  try {
+    const { subject = null, period = null } = singleSelect?.value?.selectCodes || {}
+    const { code, result: { items: data, total } } = await getQuestion({
+      params: {
+        page: currentPage.value,
+        pageSize: pageSize.value,
+        question: searchKeyword.value,
+        questionrow: 0,
+        period,
+        subject
       }
-    }
-
-    async function fetchDictCode (dictCode: string) {
-      try {
-        const { code, result: codeList } = await getDictCode({
-          params: { code: dictCode }
-        })
-        if (code === ERR_SUCCESS && codeList) {
-          return codeList.filter(item => item.label && item.value).map(item => ({
-            value: item.value,
-            label: item.label
-          }))
-        } else {
-          return []
-        }
-      } catch (error) {
-        console.error('Error fetching data:', error)
-        return []
-      }
-    }
-    onMounted(() => {
-      bus.on('keywordChange', (event) => {
-        searchKeyword.value = event as string
-      })
     })
-
-    onUnmounted(() => {
-      // 在组件销毁时移除事件监听
-      bus.off('keywordChange')
-    })
-
-    onBeforeMount(async () => {
-      platformOptions.value = await fetchDictCode('platform')
-      subjectOptions.value = await fetchDictCode('subject')
-      editionOptions.value = await fetchDictCode('edition')
-      periodOptions.value = await fetchDictCode('period')
-      gradeOptions.value = await fetchDictCode('grade')
-      termOptions.value = await fetchDictCode('term')
-    })
-
-    watch([platform, subject, edition, period, grade,
-      term, searchKeyword, currentPage, pageSize], () => {
-      fetchData()
-    }, { immediate: true })
-
-    return {
-      ceciList: dataList,
-      currentPage,
-      pageSize,
-      totalSize,
-      searchKeyword,
-      platform,
-      platformOptions,
-      subject,
-      subjectOptions,
-      edition,
-      editionOptions,
-      period,
-      periodOptions,
-      grade,
-      gradeOptions,
-      term,
-      termOptions
+    if (code === ERR_SUCCESS && data) {
+      dataList.value = data
+      totalSize.value = total
     }
+  } catch (error) {
+    console.error('Error fetching data:', error)
   }
+}
+
+watchEffect(() => {
+  fetchData()
+})
+
+defineComponent({
+  components: { QuestionDetail, ElPagination, SelectOptions }
 })
 </script>

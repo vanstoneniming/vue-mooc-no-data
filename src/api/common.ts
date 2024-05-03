@@ -72,6 +72,9 @@ export function getResDetail (id: string): Promise<MoocCeciResponseConfig<ResLin
 export function getDictCode (params: Record<any, any>): Promise<MoocDictCodeResponseConfig<DictCodeConfig[]>> {
   return axios.get('/api/system/dict_item/by/code', params)
 }
+export function getDictCodes (codes: string): Promise<MoocDictCodeResponseConfig<DictCodeConfig[]>> {
+  return axios.get('/api/system/dict_item/codes/' + codes)
+}
 export function getDataCount (): Promise<ResponseConfig<DataCountConfig>> {
   return axios.get('/api/system/data_count')
 }

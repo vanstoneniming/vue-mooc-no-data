@@ -127,7 +127,6 @@
 import { onMounted, ref } from 'vue'
 import { getDataCount } from '@/api/common'
 import { ERR_SUCCESS } from '@/api/config'
-import DictCodeSelect from '@/components/ceci/DictCodeSelect.vue'
 
 const ceciCount = ref(0)
 const resourceUrlCount = ref(0)
@@ -136,12 +135,12 @@ const resourceCount = ref(0)
 
 async function fetchData () {
   try {
-    const { code, result: { ceci_count: ceciCountResult, course_count: courseCountResult, resource_count: resourceCountResult, resource_url_count: resourceUrlCountResult } } = await getDataCount()
+    const { code, result: { ceci, course, resource, resUrl } } = await getDataCount()
     if (code === ERR_SUCCESS) {
-      ceciCount.value = ceciCountResult
-      resourceUrlCount.value = resourceUrlCountResult
-      courseCount.value = courseCountResult
-      resourceCount.value = resourceCountResult
+      ceciCount.value = ceci
+      resourceUrlCount.value = resUrl
+      courseCount.value = course
+      resourceCount.value = resource
     }
   } catch (error) {
     console.error('Error fetching data:', error)

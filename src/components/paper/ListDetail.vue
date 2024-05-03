@@ -9,15 +9,9 @@
   </div>
 </template>
 
-<script lang="ts" setup>
-import { sanitizeHTML } from '@/hooks/utils/helper'
-import { defineComponent } from 'vue'
+<script lang="ts" name="PaperFromDetail" setup>
+import { defineProps } from 'vue'
 
-defineComponent({
-  name: 'paper-from-detail'
-})
-
-// eslint-disable-next-line no-undef
 defineProps({
   item: {
     type: Object,

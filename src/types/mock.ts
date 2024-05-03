@@ -53,15 +53,24 @@ export interface ResConfig {
   title: string;
 }
 export interface DictCodeConfig {
-  id: number;
   label: string;
   value: string;
-  sort: number;
-  status: boolean;
+  code: string;
 }
 export interface CodeOptionsConfig {
   label: string;
   value: string;
+}
+// Define the type for dictCodeOptions
+interface DictCodeOption {
+  label: string;
+  value: string;
+  data: CodeOptionsConfig[];
+}
+
+// Define the type for the entire dictCodeOptions object
+export interface DictCodeOptions {
+  [key: string]: DictCodeOption;
 }
 
 export interface ResLinkConfig {
@@ -117,10 +126,10 @@ export interface LogConfig {
 }
 
 export interface DataCountConfig {
-  'course_count': number;
-  'ceci_count': number;
-  'resource_count': number;
-  'resource_url_count': number;
+  'course': number;
+  'ceci': number;
+  'resource': number;
+  'resUrl': number;
 }
 
 // address 类型

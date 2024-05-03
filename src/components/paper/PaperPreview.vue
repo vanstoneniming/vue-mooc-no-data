@@ -80,40 +80,36 @@
 
 </style>
 
-<script lang="ts" setup>
-import router from '@/router'
+<script lang="ts" setup name="PaperPreview">
+import { useStore } from 'vuex'
 import { sanitizeHTML } from '@/hooks/utils/helper'
-import { defineComponent, defineProps, ref, watch, computed } from 'vue' // Import defineProps directly from 'vue'
+import { defineProps, ref, computed, watchEffect } from 'vue'
 import { PaperConfig } from '@/types'
 import DownFile from '@/components/paper/DownFile.vue'
-import { useStore } from 'vuex'
 
 const store = useStore()
-
 const props = defineProps<{ item: PaperConfig }>() // Define props using defineProps
 const showImg = ref(false)
 const content = ref('')
 
 function goToDetail (id: number) {
   window.open('/paper/' + String(id), '_blank')
-  // router.push({ name: 'PaperDetail', params: { id } })
 }
 
 function splitPreviewImages (item: PaperConfig) {
   return item && item.previewimages ? item.previewimages.split(',') : []
 }
+
 const userInfo = computed(() => {
   return store.getters.userInfo
 })
-watch([showImg, () => props.item.papercontent], ([showImgValue, paperContentValue]) => {
-  if (showImgValue) {
-    content.value = sanitizeHTML(paperContentValue)
-  } else {
-    content.value = sanitizeHTML(paperContentValue, true)
-  }
-}, { immediate: true })
 
-defineComponent({
-  name: 'PaperPreview'
+watchEffect(() => {
+  if (showImg.value) {
+    content.value = sanitizeHTML(props.item.papercontent)
+  } else {
+    content.value = sanitizeHTML(props.item.papercontent, true)
+  }
 })
+
 </script>

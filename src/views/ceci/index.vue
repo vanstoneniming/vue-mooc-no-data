@@ -1,18 +1,14 @@
 <template>
   <div class="home">
-    <div>
-      <dict-code-select v-model="platform" :options="platformOptions" placeholder="请选择平台"></dict-code-select>
-      <dict-code-select v-model="subject" :options="subjectOptions" placeholder="请选择学科"></dict-code-select>
-      <dict-code-select v-model="edition" :options="editionOptions" placeholder="请选择版本"></dict-code-select>
-      <dict-code-select v-model="period" :options="periodOptions" placeholder="请选择学段"></dict-code-select>
-      <dict-code-select v-model="grade" :options="gradeOptions" placeholder="请选择年级"></dict-code-select>
-      <dict-code-select v-model="term" :options="termOptions" placeholder="请选择学期"></dict-code-select>
+    <div class="dict-code-options-container">
+      <SelectOptions :multiple="false" codesIn="period,subject" ref="singleSelect"/>
+      <SelectOptions :multiple="true" codesIn="platform,edition,grade,term" ref="multipleSelect"/>
     </div>
-    <div v-show="ceciList.length==0">
-        <el-empty description="暂无数据" :image-size="300"/>
+    <div v-show="dataList.length===0">
+      <el-empty :image-size="300" description="暂无数据"/>
     </div>
     <ul class="ceci-list">
-      <li v-for="(item, index) in ceciList" :key="index">
+      <li v-for="(item, index) in dataList" :key="index">
         <div class="ceci-item">
           <ceci-detail :data="item"/>
         </div>
@@ -23,13 +19,13 @@
     <el-pagination
       v-model:current-page="currentPage"
       v-model:page-size="pageSize"
-      :total="totalSize"
+      :hide-on-single-page=true
+      :page-sizes="[12, 24, 36, 48, 60]"
+      :total="totalItems"
+      layout="sizes, prev, pager, next"
       next-text="下一页"
       prev-text="上一页"
       small
-      :page-sizes="[12, 24, 36, 48, 60]"
-      :hide-on-single-page=true
-      layout="sizes, prev, pager, next"
     />
   </div>
 </template>
@@ -39,6 +35,12 @@
 
 .home {
   margin: 10px;
+}
+
+.dict-code-options-container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
 }
 
 .ceci-list {
@@ -71,136 +73,66 @@
 }
 </style>
 
-<script lang="ts">
-import { defineComponent, onBeforeMount, onMounted, onUnmounted, ref, watch } from 'vue'
-import { getCeci, getDictCode } from '@/api/common'
-import { CeciConfig, CodeOptionsConfig } from '@/types'
+<script lang="ts" name="Ceci" setup>
+import { defineComponent, inject, ref, watchEffect } from 'vue'
+import { getCeci } from '@/api/common'
+import { CeciConfig } from '@/types'
 import { ERR_SUCCESS } from '@/api/config'
 import CeciDetail from '@/components/ceci/index.vue'
-import bus from '@/utils/bus'
-import DictCodeSelect from '@/components/ceci/DictCodeSelect.vue'
 import { ElPagination } from 'element-plus/lib/components'
+import SelectOptions from '@/components/common/SelectOptions.vue'
 
-export default defineComponent({
-  name: 'Ceci',
-  components: { ElPagination, DictCodeSelect, CeciDetail },
-  setup () {
-    const dataList = ref<CeciConfig[]>([])
-    const currentPage = ref<number>(1)
-    const pageSize = ref<number>(12)
-    const totalSize = ref<number>(0)
-    const searchKeyword = ref('')
-    const platform = ref('')
-    const platformOptions = ref<CodeOptionsConfig[]>([])
-    const subject = ref('')
-    const subjectOptions = ref<CodeOptionsConfig[]>([])
-    const edition = ref('')
-    const editionOptions = ref<CodeOptionsConfig[]>([])
-    const period = ref('')
-    const periodOptions = ref<CodeOptionsConfig[]>([])
-    const grade = ref('')
-    const gradeOptions = ref<CodeOptionsConfig[]>([])
-    const term = ref('')
-    const termOptions = ref<CodeOptionsConfig[]>([])
+const { searchKeyword } = inject('searchKeyword', { searchKeyword: ref('') })
 
-    async function fetchData () {
-      try {
-        const { code, result: { items: data, total } } = await getCeci({
-          params: {
-            page: currentPage.value,
-            pageSize: pageSize.value,
-            title: searchKeyword.value,
-            platform: platform.value,
-            term: term.value,
-            period: period.value,
-            grade: grade.value,
-            edition: edition.value,
-            subject: subject.value
-          }
-        })
-        if (code === ERR_SUCCESS && data) {
-          data.forEach((item) => {
-            const title: string = item.title
-            const s = title.split('_')
-            item.title = s[3].concat('-').concat(s[2])
-            item.platform = s[0]
-            item.period = s[1]
-            item.subject = s[2]
-            item.edition = s[3]
-            item.grade = s[4]
-            item.term = s[5]
-          })
-          dataList.value = data
-          totalSize.value = total
-        }
-      } catch (error) {
-        console.error('Error fetching data:', error)
+const dataList = ref<CeciConfig[]>([])
+const currentPage = ref<number>(1)
+const pageSize = ref<number>(12)
+const totalItems = ref<number>(0)
+const singleSelect = ref()
+const multipleSelect = ref()
+
+async function fetchData () {
+  try {
+    const { subject = null, period = null } = singleSelect?.value?.selectCodes || {}
+    const { platform = [], edition = [], grade = [], term = [] } = multipleSelect?.value?.selectCodes || {}
+    const { code, result: { items: data, total } } = await getCeci({
+      params: {
+        page: currentPage.value,
+        pageSize: pageSize.value,
+        title: searchKeyword.value,
+        platform: Array.isArray(platform) ? platform.join(',') : platform,
+        grade: Array.isArray(grade) ? grade.join(',') : grade,
+        edition: Array.isArray(edition) ? edition.join(',') : edition,
+        term: Array.isArray(term) ? term.join(',') : term,
+        period,
+        subject
       }
-    }
-
-    async function fetchDictCode (dictCode: string) {
-      try {
-        const { code, result: codeList } = await getDictCode({
-          params: { code: dictCode }
-        })
-        if (code === ERR_SUCCESS && codeList) {
-          return codeList.filter(item => item.label && item.value).map(item => ({
-            value: item.value,
-            label: item.label
-          }))
-        } else {
-          return []
-        }
-      } catch (error) {
-        console.error('Error fetching data:', error)
-        return []
-      }
-    }
-
-    onBeforeMount(async () => {
-      platformOptions.value = await fetchDictCode('platform')
-      subjectOptions.value = await fetchDictCode('subject')
-      editionOptions.value = await fetchDictCode('edition')
-      periodOptions.value = await fetchDictCode('period')
-      gradeOptions.value = await fetchDictCode('grade')
-      termOptions.value = await fetchDictCode('term')
     })
-
-    onMounted(() => {
-      bus.on('keywordChange', (event) => {
-        searchKeyword.value = event as string
+    if (code === ERR_SUCCESS) {
+      data.forEach((item) => {
+        const [platform, period, subject, edition, grade, term] = item.title.split('_')
+        item.period = period
+        item.subject = subject
+        item.platform = platform
+        item.edition = edition
+        item.grade = grade
+        item.term = term
+        item.title = `${edition}-${subject}`
       })
-    })
-
-    onUnmounted(() => {
-      // 在组件销毁时移除事件监听
-      bus.off('keywordChange')
-    })
-
-    watch([platform, subject, edition, period, grade,
-      term, searchKeyword, currentPage, pageSize], () => {
-      fetchData()
-    }, { immediate: true })
-
-    return {
-      ceciList: dataList,
-      currentPage,
-      pageSize,
-      totalSize,
-      searchKeyword,
-      platform,
-      platformOptions,
-      subject,
-      subjectOptions,
-      edition,
-      editionOptions,
-      period,
-      periodOptions,
-      grade,
-      gradeOptions,
-      term,
-      termOptions
+      dataList.value = data
+      totalItems.value = total
     }
+  } catch (error) {
+    console.error('Error fetching data:', error)
   }
+}
+
+watchEffect(() => {
+  fetchData()
 })
+
+defineComponent({
+  components: { ElPagination, CeciDetail }
+})
+
 </script>

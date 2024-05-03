@@ -1,46 +1,102 @@
 <template>
-<div class="home">
-  <div v-if="false">
-    <dict-code-select :bind="platform" :options="platformOptions" placeholder="请选择平台"></dict-code-select>
-    <dict-code-select :bind="subject" :options="subjectOptions" placeholder="请选择学科"></dict-code-select>
-    <dict-code-select :bind="edition" :options="editionOptions" placeholder="请选择版本"></dict-code-select>
-    <dict-code-select :bind="period" :options="periodOptions" placeholder="请选择学段"></dict-code-select>
-    <dict-code-select :bind="grade" :options="gradeOptions" placeholder="请选择年级"></dict-code-select>
-    <dict-code-select :bind="term" :options="termOptions" placeholder="请选择学期"></dict-code-select>
+  <div class="home">
+    <el-container>
+      <el-aside>
+        <div class="pagination">
+          <SelectOptions v-if="false" :multiple="false" :setCode="setSelectCode" codesIn="period,subject"/>
+          <el-pagination
+            v-model:current-page="currentPage"
+            v-model:page-size="pageSize"
+            :hide-on-single-page=true
+            :page-sizes="[12, 24, 36, 48, 60]"
+            :total="totalSize"
+            layout="prev, pager, next"
+            next-text="下一页"
+            prev-text="上一页"
+            small
+          />
+        </div>
+        <div v-show="dataList.length==0">
+          <el-empty :image-size="300" description="暂无数据"/>
+        </div>
+        <ul class="ceci-list">
+          <li v-for="(item, index) in dataList" :key="index" :class="{ 'selected': index === selectedIndex }"
+              @click="preview(item, index)">
+            <PaperFromDetail :index="index+1" :item="item"/>
+          </li>
+        </ul>
+      </el-aside>
+      <el-main>
+        <div v-if="currentPaper">
+          <paper-preview :item="currentPaper"/>
+        </div>
+        <div v-else>暂无数据展示</div>
+      </el-main>
+    </el-container>
   </div>
-  <el-container>
-    <el-aside>
-      <div class="pagination">
-        <el-pagination
-          v-model:current-page="currentPage"
-          v-model:page-size="pageSize"
-          :hide-on-single-page=true
-          :page-sizes="[12, 24, 36, 48, 60]"
-          :total="totalSize"
-          layout="prev, pager, next"
-          next-text="下一页"
-          prev-text="上一页"
-          small
-        />
-      </div>
-      <div v-show="ceciList.length==0">
-        <el-empty :image-size="300" description="暂无数据"/>
-      </div>
-      <ul class="ceci-list">
-        <li v-for="(item, index) in ceciList" :key="index" @click="preview(item, index)" :class="{ 'selected': index === selectedIndex }">
-          <PaperFromDetail :index="index+1" :item="item" />
-        </li>
-      </ul>
-    </el-aside>
-    <el-main>
-      <div v-if="currentPaper">
-        <paper-preview :item="currentPaper"/>
-      </div>
-      <div v-else>暂无数据展示</div>
-    </el-main>
-  </el-container>
-</div>
 </template>
+
+<script lang="ts" setup name="Paper">
+import { defineComponent, inject, reactive, ref, watch } from 'vue'
+import { getPaper } from '@/api/common'
+import { ERR_SUCCESS } from '@/api/config'
+import { ElPagination } from 'element-plus/lib/components'
+import PaperFromDetail from '@/components/paper/ListDetail.vue'
+import PaperPreview from '@/components/paper/PaperPreview.vue'
+import SelectOptions from '@/components/common/SelectOptions.vue'
+import { PaperConfig } from '@/types'
+
+const dataList = ref<PaperConfig[]>([])
+const currentPage = ref<number>(1)
+const pageSize = ref<number>(12)
+const totalSize = ref<number>(0)
+const currentPaper = ref<PaperConfig | null>(null)
+const selectedIndex = ref(0)
+const { searchKeyword } = inject('searchKeyword', { searchKeyword: ref('') })
+const codes: { [key: string]: string } = reactive({ platform: '', subject: '', edition: '', period: '', grade: '', term: '' })
+
+function setSelectCode (key: string, code: string | string[]) {
+  codes[key] = Array.isArray(code) ? code.join(',') : code
+}
+async function fetchData () {
+  try {
+    const { code, result: { items: data, total } } = await getPaper({
+      params: {
+        page: currentPage.value,
+        pageSize: pageSize.value,
+        papercontent: searchKeyword.value,
+        platform: codes.platform,
+        term: codes.term,
+        period: codes.period,
+        grade: codes.grade,
+        edition: codes.edition,
+        subject: codes.subject
+      }
+    })
+    if (code === ERR_SUCCESS && data) {
+      dataList.value = data
+      totalSize.value = total
+      currentPaper.value = data[0]
+      selectedIndex.value = 0
+    }
+  } catch (error) {
+    console.error('Error fetching data:', error)
+  }
+}
+
+async function preview (item: PaperConfig | null, index: number) {
+  selectedIndex.value = index
+  currentPaper.value = item
+}
+
+watch([codes, searchKeyword, currentPage, pageSize], () => {
+  fetchData()
+}, { immediate: true, deep: true })
+
+defineComponent({
+  components: { SelectOptions, PaperPreview, PaperFromDetail, ElPagination }
+})
+</script>
 
 <style scoped>
 .home {
@@ -113,140 +169,18 @@ li.selected{
     width: 100%;
     position: relative;
   }
+
+  .ceci-list {
+    display: flex;
+    max-height: 200px; /* 设置最大高度为屏幕显示区域的50% */
+    overflow: auto; /* 超出部分隐藏 */
+    transition: max-height 0.3s ease; /* 添加过渡效果 */
+  }
+
+  .ceci-list:hover {
+    display: flex;
+    max-height: none; /* 设置最大高度为屏幕显示区域的50% */
+  }
+
 }
 </style>
-
-<script lang="ts">
-import { defineComponent, onBeforeMount, onMounted, onUnmounted, ref, watch } from 'vue'
-import { getDictCode, getPaper } from '@/api/common'
-import { CodeOptionsConfig, PaperConfig } from '@/types'
-import { ERR_SUCCESS } from '@/api/config'
-import bus from '@/utils/bus'
-import DictCodeSelect from '@/components/ceci/DictCodeSelect.vue'
-import { ElPagination } from 'element-plus/lib/components'
-import PaperFromDetail from '@/components/paper/ListDetail.vue'
-import PaperPreview from '@/components/paper/PaperPreview.vue'
-
-export default defineComponent({
-  name: 'Paper',
-  components: { PaperPreview, PaperFromDetail, ElPagination, DictCodeSelect },
-  setup () {
-    const dataList = ref<PaperConfig[]>([])
-    const currentPage = ref<number>(1)
-    const pageSize = ref<number>(12)
-    const totalSize = ref<number>(0)
-    const searchKeyword = ref('')
-    const platform = ref('')
-    const platformOptions = ref<CodeOptionsConfig[]>([])
-    const subject = ref('')
-    const subjectOptions = ref<CodeOptionsConfig[]>([])
-    const edition = ref('')
-    const editionOptions = ref<CodeOptionsConfig[]>([])
-    const period = ref('')
-    const periodOptions = ref<CodeOptionsConfig[]>([])
-    const grade = ref('')
-    const gradeOptions = ref<CodeOptionsConfig[]>([])
-    const term = ref('')
-    const termOptions = ref<CodeOptionsConfig[]>([])
-    const currentPaper = ref<PaperConfig | null>(null)
-    const selectedIndex = ref(0)
-
-    async function fetchData () {
-      try {
-        const { code, result: { items: data, total } } = await getPaper({
-          params: {
-            page: currentPage.value,
-            pageSize: pageSize.value,
-            papercontent: searchKeyword.value,
-            platform: platform.value,
-            term: term.value,
-            period: period.value,
-            grade: grade.value,
-            edition: edition.value,
-            subject: subject.value
-          }
-        })
-        if (code === ERR_SUCCESS && data) {
-          dataList.value = data
-          totalSize.value = total
-          currentPaper.value = data[0]
-          selectedIndex.value = 0
-        }
-      } catch (error) {
-        console.error('Error fetching data:', error)
-      }
-    }
-
-    async function preview (item: PaperConfig | null, index: number) {
-      selectedIndex.value = index
-      currentPaper.value = item
-    }
-
-    async function fetchDictCode (dictCode: string) {
-      try {
-        const { code, result: codeList } = await getDictCode({
-          params: { code: dictCode }
-        })
-        if (code === ERR_SUCCESS && codeList) {
-          return codeList.filter(item => item.label && item.value).map(item => ({
-            value: item.value,
-            label: item.label
-          }))
-        } else {
-          return []
-        }
-      } catch (error) {
-        console.error('Error fetching data:', error)
-        return []
-      }
-    }
-    onMounted(() => {
-      bus.on('keywordChange', (event) => {
-        searchKeyword.value = event as string
-      })
-    })
-
-    onUnmounted(() => {
-      // 在组件销毁时移除事件监听
-      bus.off('keywordChange')
-    })
-
-    onBeforeMount(async () => {
-      platformOptions.value = await fetchDictCode('platform')
-      subjectOptions.value = await fetchDictCode('subject')
-      editionOptions.value = await fetchDictCode('edition')
-      periodOptions.value = await fetchDictCode('period')
-      gradeOptions.value = await fetchDictCode('grade')
-      termOptions.value = await fetchDictCode('term')
-    })
-
-    watch([platform, subject, edition, period, grade,
-      term, searchKeyword, currentPage, pageSize], () => {
-      fetchData()
-    }, { immediate: true })
-
-    return {
-      ceciList: dataList,
-      preview,
-      currentPaper,
-      currentPage,
-      pageSize,
-      totalSize,
-      searchKeyword,
-      platform,
-      platformOptions,
-      subject,
-      subjectOptions,
-      edition,
-      editionOptions,
-      period,
-      periodOptions,
-      grade,
-      gradeOptions,
-      term,
-      termOptions,
-      selectedIndex
-    }
-  }
-})
-</script>
