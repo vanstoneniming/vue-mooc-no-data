@@ -36,30 +36,28 @@
     </dl>
   </div>
 </template>
-<script lang="ts">
-import { defineComponent, onBeforeMount, reactive, ref } from 'vue'
-import { BindingConfig } from '@/types'
+
+<script lang="ts" setup name="UserBinding">
+import { onBeforeMount, reactive, ref } from 'vue'
 import { getUserBinding } from '@/api/user'
+import { BindingConfig } from '@/types'
 import { ERR_OK } from '@/api/config'
-export default defineComponent({
-  name: 'UserBinding',
-  setup () {
-    const showLatest = ref(true)
-    const bindingInfo = reactive<BindingConfig>({})
-    onBeforeMount(async () => {
-      const { code, data } = await getUserBinding()
-      if (code === ERR_OK) {
-        ({
-          email: bindingInfo.email,
-          phone: bindingInfo.phone,
-          password: bindingInfo.password
-        } = data)
-      }
-    })
-    return { showLatest, bindingInfo }
+
+const showLatest = ref(false)
+const bindingInfo = reactive<BindingConfig>({})
+
+onBeforeMount(async () => {
+  const { code, data } = await getUserBinding()
+  if (code === ERR_OK) {
+    ({
+      email: bindingInfo.email,
+      phone: bindingInfo.phone,
+      password: bindingInfo.password
+    } = data)
   }
 })
 </script>
+
 <style lang="scss" scoped>
   @import '~@/assets/styles/variables.scss';
   @import '~@/assets/styles/mixin.scss';

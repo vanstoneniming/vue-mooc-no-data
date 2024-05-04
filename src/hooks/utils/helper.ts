@@ -12,7 +12,8 @@ export function sanitizeHTML (html: string, removeImages = false): string {
     'data-rawheight',
     'data-rawwidth',
     'style',
-    'lang'
+    'lang',
+    'span'
   ]
 
   // Create a container element and set its HTML content

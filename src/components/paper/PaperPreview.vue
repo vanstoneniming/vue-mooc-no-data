@@ -1,19 +1,25 @@
 <template>
   <el-container>
     <el-aside>
+      <!-- 侧边栏内容 -->
       <div class="flex items-center">
+        <!-- 详情按钮 -->
         <el-button @click="goToDetail(item.id)">
           <el-icon class="el-icon--left">
             <Expand/>
           </el-icon>
           详情
         </el-button>
-        <DownFile v-if="userInfo.id" :item="item"  :is-primary="false" />
+        <!-- 下载文件组件 -->
+        <DownFile v-if="userInfo.id" :is-primary="false" :item="item"/>
+        <!-- 显示/隐藏图片开关 -->
         <el-switch v-model="showImg" active-text="显示图片" inactive-text="隐藏图片"
                    inline-prompt size="large"></el-switch>
       </div>
+      <!-- 图片展示区域 -->
       <el-image
         v-if="splitPreviewImages(item)[0]"
+        :hide-on-click-modal="true"
         :initial-index="0"
         :max-scale="7"
         :min-scale="0.2"
@@ -21,14 +27,84 @@
         :src="splitPreviewImages(item)[0]"
         :zoom-rate="1.2"
         fit="cover"
-        :hide-on-click-modal="true"
       />
+          <el-tag v-for="anchor in anchors" :key="anchor.id" @click="scrollAnchor(anchor.id)">
+            {{ anchor.id.replace('anchor-','') }} ... {{ anchor.text }} ...
+          </el-tag>
     </el-aside>
     <el-main>
-      <div class="content" v-html="content"></div>
+      <!-- 内容展示区域 -->
+      <div class="content" v-html="contentWithAnchors"></div>
     </el-main>
   </el-container>
 </template>
+<script lang="ts" setup>
+import { useStore } from 'vuex'
+import { sanitizeHTML } from '@/hooks/utils/helper'
+import { computed, defineProps, inject, ref, watchEffect } from 'vue'
+import { PaperConfig } from '@/types'
+import DownFile from '@/components/paper/DownFile.vue'
+
+const store = useStore()
+const props = defineProps<{ item: PaperConfig }>()
+const showImg = ref(false)
+const { searchKeyword } = inject('searchKeyword', { searchKeyword: ref('') })
+const anchors = ref<{ id: string; text: string }[]>([])
+const contentWithAnchors = ref('')
+
+const userInfo = computed(() => {
+  return store.getters.userInfo
+})
+
+function goToDetail (id: number) {
+  window.open('/paper/' + String(id), '_blank')
+}
+
+function splitPreviewImages (item: PaperConfig) {
+  return item && item.previewimages ? item.previewimages.split(',') : []
+}
+
+function removeHTMLTags (html: string): string {
+  return html.replace(/<[^>]+>/g, '')
+}
+
+function scrollAnchor (anchorId: string) {
+  // 计算滚动距离并应用样式
+  const anchorElement = document.getElementById(anchorId) // 假设第一个锚点的 ID 为 anchor-1
+  if (anchorElement) {
+    const topOffset = anchorElement.getBoundingClientRect().top // 获取距离视口顶部的距离
+    window.scrollTo({ top: window.pageYOffset + topOffset - 78, behavior: 'smooth' }) // 应用滚动样式，减去 72px 的固定元素高度
+  }
+}
+
+watchEffect(() => {
+  const originalContent = showImg.value
+    ? sanitizeHTML(props.item.papercontent)
+    : sanitizeHTML(props.item.papercontent, true)
+  const keyword = searchKeyword.value
+  if (keyword) {
+    let idCount = 1
+    const headings: { id: string; text: string }[] = []
+    const regex = new RegExp(`(${keyword})`, 'gi') // 使用全局匹配
+    let match
+    const removedHtmlTagsContent = removeHTMLTags(originalContent)
+    while ((match = regex.exec(removedHtmlTagsContent)) !== null) {
+      const startIndex = match.index - 5
+      const endIndex = Math.min(startIndex + keyword.length + 15, removedHtmlTagsContent.length)
+      const text = removedHtmlTagsContent.substring(startIndex, endIndex) // 截取关键词后面10个字符的文本
+      const id = `anchor-${idCount++}`
+      headings.push({ id, text })
+    }
+    idCount = 1
+    const highlightedContent = originalContent.replace(regex, (match, keyword) => {
+      const id = `anchor-${idCount++}`
+      return `<span id="${id}" class="anchor highlighted">${keyword}</span>`
+    })
+    anchors.value = headings
+    contentWithAnchors.value = highlightedContent
+  }
+})
+</script>
 
 <style scoped>
 /* 默认样式 */
@@ -39,6 +115,18 @@
 .el-main {
   flex: 1;
   margin-right: 360px;
+}
+
+.el-tag {
+  margin: 5px;
+  width: 350px;
+  justify-content: flex-start;
+  cursor: grab;
+}
+
+p {
+  background-color: yellow !important;
+  font-weight: bold !important;
 }
 
 .el-aside {
@@ -61,6 +149,11 @@
   padding: 0 5px;
 }
 
+.el-container >>> .highlighted {
+  background-color: yellow;
+  font-weight: bold;
+}
+
 /* 小屏幕下的样式 */
 @media screen and (max-width: 1000px) {
   .el-container {
@@ -79,37 +172,3 @@
 }
 
 </style>
-
-<script lang="ts" setup name="PaperPreview">
-import { useStore } from 'vuex'
-import { sanitizeHTML } from '@/hooks/utils/helper'
-import { defineProps, ref, computed, watchEffect } from 'vue'
-import { PaperConfig } from '@/types'
-import DownFile from '@/components/paper/DownFile.vue'
-
-const store = useStore()
-const props = defineProps<{ item: PaperConfig }>() // Define props using defineProps
-const showImg = ref(false)
-const content = ref('')
-
-function goToDetail (id: number) {
-  window.open('/paper/' + String(id), '_blank')
-}
-
-function splitPreviewImages (item: PaperConfig) {
-  return item && item.previewimages ? item.previewimages.split(',') : []
-}
-
-const userInfo = computed(() => {
-  return store.getters.userInfo
-})
-
-watchEffect(() => {
-  if (showImg.value) {
-    content.value = sanitizeHTML(props.item.papercontent)
-  } else {
-    content.value = sanitizeHTML(props.item.papercontent, true)
-  }
-})
-
-</script>

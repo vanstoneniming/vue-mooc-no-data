@@ -16,6 +16,7 @@
     "cors-anywhere": "0.4.4",
     "element-plus": "2.6.1",
     "good-storage": "^1.1.1",
+    "highlight.js": "^11.9.0",
     "mitt": "^3.0.1",
     "normalize.css": "^8.0.1",
     "throttle-debounce": "^3.0.1",

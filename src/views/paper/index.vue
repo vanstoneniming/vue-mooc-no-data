@@ -2,6 +2,12 @@
   <div class="home">
     <el-container>
       <el-aside>
+        <div class="radio-buttons">
+          <el-radio-group v-model="selectedType">
+            <el-radio-button label="试卷" value="paper"/>
+            <el-radio-button label="资源" value="res"/>
+          </el-radio-group>
+        </div>
         <div class="pagination">
           <SelectOptions v-if="false" :multiple="false" :setCode="setSelectCode" codesIn="period,subject"/>
           <el-pagination
@@ -37,7 +43,7 @@
 </template>
 
 <script lang="ts" setup name="Paper">
-import { defineComponent, inject, reactive, ref, watch } from 'vue'
+import { defineComponent, inject, reactive, ref, watchEffect } from 'vue'
 import { getPaper } from '@/api/common'
 import { ERR_SUCCESS } from '@/api/config'
 import { ElPagination } from 'element-plus/lib/components'
@@ -54,6 +60,7 @@ const currentPaper = ref<PaperConfig | null>(null)
 const selectedIndex = ref(0)
 const { searchKeyword } = inject('searchKeyword', { searchKeyword: ref('') })
 const codes: { [key: string]: string } = reactive({ platform: '', subject: '', edition: '', period: '', grade: '', term: '' })
+const selectedType = ref('paper')
 
 function setSelectCode (key: string, code: string | string[]) {
   codes[key] = Array.isArray(code) ? code.join(',') : code
@@ -65,6 +72,7 @@ async function fetchData () {
         page: currentPage.value,
         pageSize: pageSize.value,
         papercontent: searchKeyword.value,
+        papertype: selectedType.value,
         platform: codes.platform,
         term: codes.term,
         period: codes.period,
@@ -89,9 +97,7 @@ async function preview (item: PaperConfig | null, index: number) {
   currentPaper.value = item
 }
 
-watch([codes, searchKeyword, currentPage, pageSize], () => {
-  fetchData()
-}, { immediate: true, deep: true })
+watchEffect(() => { fetchData() })
 
 defineComponent({
   components: { SelectOptions, PaperPreview, PaperFromDetail, ElPagination }
@@ -101,6 +107,12 @@ defineComponent({
 <style scoped>
 .home {
   margin: 10px;
+}
+
+.radio-buttons {
+  display: flex;
+  justify-content: center;
+  margin-top: 5px;
 }
 
 .ceci-list {
