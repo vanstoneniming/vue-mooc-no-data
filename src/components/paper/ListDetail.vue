@@ -10,8 +10,8 @@
 </template>
 
 <script lang="ts" name="PaperFromDetail" setup>
-import { defineProps } from 'vue'
 
+// eslint-disable-next-line no-undef
 defineProps({
   item: {
     type: Object,
