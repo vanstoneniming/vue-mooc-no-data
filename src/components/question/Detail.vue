@@ -19,9 +19,10 @@
   </el-card>
 </template>
 <script lang="ts" setup name="QuestionDetail">
-import { ref, defineProps } from 'vue'
+import { ref } from 'vue'
 import { sanitizeHTML } from '@/hooks/utils/helper'
 
+// eslint-disable-next-line no-undef
 defineProps({
   item: Object,
   index: Number
