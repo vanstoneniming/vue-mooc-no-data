@@ -1,8 +1,15 @@
 <template>
   <div class="home">
-    <ul class="ceci-list">
+    <el-tabs type="border-card">
+      <el-tab-pane label="试卷切图">
+        <paper-split-image :item="paperData"></paper-split-image>
+      </el-tab-pane>
+      <el-tab-pane label="试卷详情">
         <paper-page :item="paperData"></paper-page>
-    </ul>
+      </el-tab-pane>
+      <el-tab-pane label="pdf预览处理">
+      </el-tab-pane>
+    </el-tabs>
   </div>
 </template>
 <style scoped>
@@ -10,14 +17,6 @@
 
 .home {
   margin: 10px;
-}
-
-.ceci-list {
-  display: flex;
-  flex-wrap: wrap;
-  list-style-type: none;
-  padding: 0;
-  justify-content: left;
 }
 
 .ceci-list li {
@@ -30,11 +29,6 @@
   background-color: #f3f5f7;
 }
 
-.pagination {
-  margin: 10px;
-  display: flex;
-  justify-content: center;
-}
 </style>
 
 <script lang="ts">
@@ -44,10 +38,11 @@ import { ERR_SUCCESS } from '@/api/config'
 
 import { useRoute } from 'vue-router'
 import PaperPage from '@/components/paper/PaperPage.vue'
+import PaperSplitImage from '@/components/paper/PaperSplitImage.vue'
 
 export default defineComponent({
   name: 'PaperDetail',
-  components: { PaperPage },
+  components: { PaperSplitImage, PaperPage },
   setup () {
     const paperData = ref({})
     const route = useRoute()

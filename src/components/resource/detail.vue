@@ -30,64 +30,65 @@
   </el-card>
 </template>
 
-<script>
+<script setup lang="ts" name="StorageDetail">
 import { ElMessage } from 'element-plus/lib'
 import { shortenText } from '@/hooks/utils/helper'
+import { computed } from 'vue'
+import ClipboardJS from 'clipboard'
 
-export const CopyLinkType = {
-  Text: 'text',
-  JSON: 'json'
+// eslint-disable-next-line no-undef
+const props = defineProps({
+  data: {
+    type: Object,
+    required: true
+  }
+})
+
+function copyLink (url: string, type: string) {
+  const title = props.data.resource_name
+  let text: string
+
+  if (type === 'text') {
+    text = `资源名称： ${title}\n资源链接： ${url}`
+  } else {
+    text = `{"url": "${url}", "title": "${title}"}`
+  }
+
+  const clipboard = new ClipboardJS('div.right-aligned-buttons .el-button', {
+    text: () => text
+  })
+
+  clipboard.on('success', () => {
+    ElMessage.success('链接已复制到剪贴板！')
+    clipboard.destroy()
+  })
+
+  clipboard.on('error', (error) => {
+    ElMessage.error('链接复制失败: ' + error.action)
+    clipboard.destroy()
+  })
 }
 
-export default {
-  name: 'StorageDetail',
-  methods: {
-    shortenText,
+function openOriginal (url: string) {
+  window.open(url, '_blank', 'noopener,noreferrer')
+}
 
-    copyLink (url, type = CopyLinkType.JSON) {
-      const title = this.data.resource_name
-      let text
-
-      if (type === CopyLinkType.Text) {
-        text = `资源名称： ${title}\n资源链接： ${url}`
-      } else {
-        text = `{"url": "${url}", "title": "${title}"}`
-      }
-
-      navigator.clipboard.writeText(text)
-        .then(() => {
-          ElMessage.success('链接已复制到剪贴板！')
-        })
-        .catch((error) => {
-          ElMessage.error('链接复制失败: ', error)
-        })
-    },
-    openOriginal (url) {
-      window.open(url, '_blank', 'noopener,noreferrer')
-    },
-    commitStr (item) {
-      if (item.includes('.exp.bcevod.com/')) {
-        return '添加referrer: https://jpk.eduyun.cn/'
-      } else {
-        return ''
-      }
-    },
-    updateDate (dateStr) {
-      return dateStr.split('T')[0]
-    }
-  },
-  props: {
-    data: {
-      type: Object,
-      required: true
-    }
-  },
-  computed: {
-    storages () {
-      return this.data.storages.split(',')
-    }
+function commitStr (item: string) {
+  if (item.includes('.exp.bcevod.com/')) {
+    return '添加referrer: https://jpk.eduyun.cn/'
+  } else {
+    return ''
   }
 }
+
+function updateDate (dateStr: string) {
+  return dateStr.split('T')[0]
+}
+
+const storages = computed(() => {
+  return props.data.storages.split(',')
+})
+
 </script>
 
 <style scoped>

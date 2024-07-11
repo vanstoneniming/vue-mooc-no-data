@@ -2,20 +2,21 @@
   <el-select-v2
     v-model="currentValue"
     :max-collapse-tags="3"
+    :multiple="multiple"
     :options="options"
     :placeholder="placeholder"
     clearable
     collapse-tags
     collapse-tags-tooltip
     filterable
-    :multiple="multiple"
   />
 </template>
 
 <script lang="ts" name="DictCodeSelect" setup>
-import { defineProps, ref } from 'vue'
+import { ref } from 'vue'
 
 const currentValue = ref('')
+// eslint-disable-next-line no-undef
 defineProps({
   options: {
     type: Array,
