@@ -1,5 +1,5 @@
 <template>
-  <el-button :icon="Download" @click="visible = true" :type="isPrimary ? 'primary' : ''">下载附件</el-button>
+  <el-button :icon="Download" @click="paperFiles" ref="downloadButtonRef">下载附件</el-button>
   <el-dialog v-model="visible" :show-close="false" draggable>
     <template #header="{ close, titleId, titleClass }">
       <div class="my-header">
@@ -24,33 +24,53 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, defineProps, watch } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { CircleCloseFilled, Download } from '@element-plus/icons-vue'
 import { PaperConfig } from '@/types'
 import { getPaperFile } from '@/api/common'
 import { ERR_SUCCESS } from '@/api/config'
+import { ElMessage, ElButton } from 'element-plus/lib'
 import { formatFileSize, shortenText } from '@/hooks/utils/helper'
+import { useStore } from 'vuex'
+import router from '@/router'
 
+const store = useStore()
 const visible = ref(false)
 const dataList = ref<PaperConfig[]>([])
+const downloadButtonRef = ref<InstanceType<typeof ElButton> | null>(null)
 
-const props = defineProps<{ item: PaperConfig; isPrimary: boolean }>() // Define props and assign to variable
+// eslint-disable-next-line no-undef
+const props = defineProps<{ item: PaperConfig; isPrimary: boolean }>()
+
+const userInfo = computed(() => {
+  return store.getters.userInfo
+})
 
 async function paperFiles () {
-  try {
-    const idsString = props.item.paperfile.join(',')
-    const { code, result: data } = await getPaperFile(idsString)
-    if (code === ERR_SUCCESS && data) {
-      dataList.value = data
+  if (userInfo.value.id) {
+    try {
+      const idsString = Array.from(props.item.paperfile).join(',')
+      const { code, message, result: data } = await getPaperFile(idsString)
+      if (code === ERR_SUCCESS && data) {
+        dataList.value = data
+        visible.value = true
+      } else {
+        ElMessage.error(message)
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error)
     }
-  } catch (error) {
-    console.error('Error fetching data:', error)
+  } else {
+    ElMessage.warning('需要登录才能查看下载信息')
+    await router.push('login')
   }
 }
 
-watch(() => props.item.paperfile, () => {
-  paperFiles()
-}, { immediate: true })
+onMounted(() => {
+  if (props.isPrimary && downloadButtonRef.value) {
+    downloadButtonRef.value.$el.classList.add('el-button--primary')
+  }
+})
 </script>
 
 <style scoped>
