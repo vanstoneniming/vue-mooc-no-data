@@ -26,7 +26,7 @@
 </template>
 
 <script lang="ts" setup name="HeaderSearch">
-import { inject, ref } from 'vue'
+import { inject, ref, watch } from 'vue'
 
 const keyword = ref('')
 const select = ref('')
@@ -35,6 +35,12 @@ const { searchKeyword } = inject('searchKeyword', { searchKeyword: ref('') })
 function handleKeywordChange () {
   searchKeyword.value = keyword.value
 }
+
+watch(keyword, (newValue, oldValue) => {
+  if (!newValue.trim() && oldValue.trim()) {
+    searchKeyword.value = newValue
+  }
+})
 </script>
 <style lang="scss" scoped>
 .el-input {

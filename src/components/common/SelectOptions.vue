@@ -23,7 +23,7 @@
 
 <script lang="ts" setup name="SelectOptions">
 import DictCodeSelect from '@/components/common/DictCodeSelect.vue'
-import { onMounted, reactive, defineProps, defineExpose } from 'vue'
+import { onMounted, reactive, defineExpose } from 'vue'
 import { DictCodeOptions } from '@/types'
 import { getDictCodes } from '@/api/common'
 import { ERR_SUCCESS } from '@/api/config'
@@ -41,6 +41,7 @@ const dictCodeOptions: DictCodeOptions = reactive({
   term: { label: '学期', value: '', data: [] }
 })
 
+// eslint-disable-next-line no-undef
 const props = defineProps(['codesIn', 'setCode', 'multiple'])
 
 defineExpose({ selectCodes })
