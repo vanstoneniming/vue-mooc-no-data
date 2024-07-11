@@ -9,6 +9,12 @@ export interface ResponseConfig<T> {
   result: T;
 }
 
+export interface ResolveResponseConfig {
+  code: number;
+  message: string;
+  result: { resolve_result: string };
+}
+
 export interface MoocCeciResponseConfig<T> {
   code: number;
   msg?: string;

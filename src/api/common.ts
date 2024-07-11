@@ -5,9 +5,19 @@ import {
   FooterLinkConfig,
   MoocCeciResponseConfig,
   MoocCourseResponseConfig,
-  MoocResponseConfig, MoocDictCodeResponseConfig,
-  NavConfig, ResConfig, ResLinkConfig,
-  SidebarItemConfig, DictCodeConfig, ResponseConfig, DataCountConfig, QuestionrowConfig, QuestionConfig, PaperConfig
+  MoocResponseConfig,
+  MoocDictCodeResponseConfig,
+  NavConfig,
+  ResConfig,
+  ResLinkConfig,
+  SidebarItemConfig,
+  DictCodeConfig,
+  ResponseConfig,
+  DataCountConfig,
+  QuestionrowConfig,
+  QuestionConfig,
+  PaperConfig,
+  ResolveResponseConfig
 } from '@/types'
 
 // header navigation list
@@ -23,6 +33,10 @@ export function getFooterLink (): Promise<MoocResponseConfig<FooterLinkConfig[]>
 // sidebar list
 export function getSidebar (): Promise<MoocResponseConfig<SidebarItemConfig[]>> {
   return axios.get('/api/sidebar')
+}
+
+export function parseCourseUrl (params: {url: string}): Promise<ResolveResponseConfig> {
+  return axios.post('/api/generator/resolve', params)
 }
 
 export function getCeci (params: Record<any, any>): Promise<MoocCeciResponseConfig<CeciConfig[]>> {
@@ -47,7 +61,7 @@ export function getPaper (params: Record<any, any>): Promise<MoocCeciResponseCon
 export function getPaperDetail (id: string): Promise<MoocCeciResponseConfig<PaperConfig>> {
   return axios.get('/api/generator/paperfrom/' + id)
 }
-export function getPaperFile (ids: string): Promise<MoocDictCodeResponseConfig<PaperConfig>> {
+export function getPaperFile (ids: string): Promise<MoocDictCodeResponseConfig<PaperConfig[]>> {
   return axios.get('/api/system/file/paper/' + ids)
 }
 
