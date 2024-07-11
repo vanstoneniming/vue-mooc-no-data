@@ -19,7 +19,7 @@
         :src="splitPreviewImages(item)[0]"
         :zoom-rate="1.2"
         fit="cover"
-        hide-on-click-modal="true"
+        :hide-on-click-modal="true"
       />
     </div>
     <div class="text-content">
@@ -28,14 +28,15 @@
     </div>
   </div>
 </template>
-<script lang="ts" setup>
+<script lang="ts" setup name= 'PaperPage'>
 import { sanitizeHTML } from '@/hooks/utils/helper'
 import { PaperConfig } from '@/types'
-import { defineComponent, defineProps, ref, watch, computed } from 'vue' // Import defineProps directly from 'vue'
+import { ref, watch, computed } from 'vue'
 import DownFile from '@/components/paper/DownFile.vue'
 import { useStore } from 'vuex'
 
 const store = useStore()
+// eslint-disable-next-line no-undef
 const props = defineProps<{ item: PaperConfig }>() // Define props using defineProps
 const showImg = ref(true)
 const content = ref('')
@@ -56,9 +57,6 @@ watch([showImg, () => props.item.papercontent], ([showImgValue, paperContentValu
   }
 }, { immediate: true })
 
-defineComponent({
-  name: 'PaperPage'
-})
 </script>
 
 <style scoped>
@@ -70,6 +68,7 @@ defineComponent({
 .text-content {
   padding: 5px;
   border-left-style: none;
+  width: 100%;
 }
 
 .image-preview .el-image {

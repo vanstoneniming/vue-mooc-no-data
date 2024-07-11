@@ -11,7 +11,7 @@
           详情
         </el-button>
         <!-- 下载文件组件 -->
-        <DownFile v-if="userInfo.id" :is-primary="false" :item="item"/>
+        <DownFile :is-primary="false" :item="item"/>
         <!-- 显示/隐藏图片开关 -->
         <el-switch v-model="showImg" active-text="显示图片" inactive-text="隐藏图片"
                    inline-prompt size="large"></el-switch>
@@ -28,9 +28,9 @@
         :zoom-rate="1.2"
         fit="cover"
       />
-          <el-tag v-for="anchor in anchors" :key="anchor.id" @click="scrollAnchor(anchor.id)">
-            {{ anchor.id.replace('anchor-','') }} ... {{ anchor.text }} ...
-          </el-tag>
+      <el-tag v-for="anchor in anchors" :key="anchor.id" @click="scrollAnchor(anchor.id)">
+        {{ anchor.id.replace('anchor-','') }} ... {{ anchor.text }} ...
+      </el-tag>
     </el-aside>
     <el-main>
       <!-- 内容展示区域 -->
@@ -38,23 +38,41 @@
     </el-main>
   </el-container>
 </template>
+
 <script lang="ts" setup>
-import { useStore } from 'vuex'
 import { sanitizeHTML } from '@/hooks/utils/helper'
-import { computed, defineProps, inject, ref, watchEffect } from 'vue'
+import { inject, nextTick, ref, watchEffect } from 'vue'
 import { PaperConfig } from '@/types'
 import DownFile from '@/components/paper/DownFile.vue'
 
-const store = useStore()
+// eslint-disable-next-line no-undef
 const props = defineProps<{ item: PaperConfig }>()
 const showImg = ref(false)
 const { searchKeyword } = inject('searchKeyword', { searchKeyword: ref('') })
 const anchors = ref<{ id: string; text: string }[]>([])
 const contentWithAnchors = ref('')
 
-const userInfo = computed(() => {
-  return store.getters.userInfo
-})
+function observeImages () {
+  const observer = new IntersectionObserver((entries, observer) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const img = entry.target
+        const dataSrc = img.getAttribute('src_url')
+        if (dataSrc) img.setAttribute('src', dataSrc)
+        observer.unobserve(img)
+      }
+    })
+  }, {
+    threshold: 0// 将阈值设置为0到1之间的值，表示元素可见性的百分比
+  })
+
+  nextTick(() => {
+    const images = document.querySelectorAll('img[src_url]')
+    images.forEach(img => {
+      observer.observe(img)
+    })
+  })
+}
 
 function goToDetail (id: number) {
   window.open('/paper/' + String(id), '_blank')
@@ -81,7 +99,7 @@ watchEffect(() => {
   const originalContent = showImg.value
     ? sanitizeHTML(props.item.papercontent)
     : sanitizeHTML(props.item.papercontent, true)
-  const keyword = searchKeyword.value
+  const keyword = searchKeyword.value.trim()
   if (keyword) {
     let idCount = 1
     const headings: { id: string; text: string }[] = []
@@ -102,7 +120,11 @@ watchEffect(() => {
     })
     anchors.value = headings
     contentWithAnchors.value = highlightedContent
+  } else {
+    anchors.value = []
+    contentWithAnchors.value = originalContent
   }
+  observeImages()
 })
 </script>
 
@@ -149,7 +171,7 @@ p {
   padding: 0 5px;
 }
 
-.el-container >>> .highlighted {
+.el-container :deep(.highlighted) {
   background-color: yellow;
   font-weight: bold;
 }

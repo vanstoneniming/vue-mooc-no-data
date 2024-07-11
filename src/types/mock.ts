@@ -34,6 +34,9 @@ export interface QuestionConfig {
 export interface PaperConfig {
   id: number;
   papername: string;
+  url: string;
+  name: string;
+  size: number;
   previewimages: string;
   paperfile: string;
   papercontent: string;
