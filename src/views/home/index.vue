@@ -7,27 +7,20 @@
             <el-icon size="50px">
               <Stopwatch />
             </el-icon>
-            系统正在建设中，部分功能处于调试阶段，敬请期待！
+            本站为"课·视频[ke.video]"和"题·视频[ti.video]"联合站，系统正在建设中，部分功能处于调试阶段，敬请期待！
           </el-col>
         </div>
       </template>
-      <div>
-        <el-row class="center-row">
-          <el-col :span="5">
-            <el-statistic :value="ceciCount" title="册次数量"/>
-          </el-col>
-          <el-col :span="5">
-            <el-statistic :value="courseCount" title="课程数量"/>
-          </el-col>
-          <el-col :span="7">
-            <el-statistic :value="resourceCount" title="资源数量"/>
-          </el-col>
-          <el-col :span="7">
-            <el-statistic :value="resourceUrlCount" title="链接数量"/>
-          </el-col>
-        </el-row>
-        <el-divider/>
+      <div class="statistics-container">
+        <el-statistic :value="ceci" title="册次数量"/>
+        <el-statistic :value="course" title="课程数量"/>
+        <el-statistic :value="resource" title="资源数量"/>
+        <el-statistic :value="resUrl" title="链接数量"/>
+        <el-statistic :value="paper" title="试卷数量"/>
+        <el-statistic :value="questionRow" title="题帽题数"/>
+        <el-statistic :value="question" title="单题数量"/>
       </div>
+      <el-divider/>
       <div>
         <ul>
           <li>
@@ -37,7 +30,8 @@
               </el-icon>
             </div>
             <div class="text-container">
-              本站致力于为广大一线教师提供多平台丰富的视频微课、公开课、精品课等资源。
+              课·视频致力于为广大一线教师提供多平台丰富的视频微课、公开课、精品课等资源。
+              题·视频致力于整理和优化试卷、试题组织管理、查询和重组等功能研发和实践。
             </div>
           </li>
           <li>
@@ -78,6 +72,17 @@
             </div>
             <div class="text-container">
               资源格式包含常见的mp4视频文件，ppt课件，docx教案，还有部分资源是pdf格式的，如有需要可以用百度网盘等工具转换成pptx或者docx格式。
+            </div>
+          </li>
+          <li>
+            <div class="icon-container">
+              <el-icon>
+                <Files/>
+              </el-icon>
+            </div>
+            <div class="text-container">
+              题·视频网站主要收集整理各地中高考真题和模拟试卷，并且进行深加工，比如试卷pdf转换word或者markdown，latex等格式，试题切割入库，
+              后期陆续研发利用分割好的试题组卷、在线练习、在线考试、试题视频讲解等功能。
             </div>
           </li>
         </ul>
@@ -123,35 +128,34 @@
 
 </template>
 
-<script lang="ts" setup>
-import { onMounted, ref } from 'vue'
+<script setup lang="ts">
+import { onMounted, reactive, toRefs } from 'vue'
 import { getDataCount } from '@/api/common'
 import { ERR_SUCCESS } from '@/api/config'
 
-const ceciCount = ref(0)
-const resourceUrlCount = ref(0)
-const courseCount = ref(0)
-const resourceCount = ref(0)
-
+const counts = reactive({
+  ceci: 0,
+  resUrl: 0,
+  course: 0,
+  resource: 0,
+  paper: 0,
+  question: 0,
+  questionRow: 0
+})
+const { ceci, resUrl, course, resource, paper, question, questionRow } = toRefs(counts)
 async function fetchData () {
   try {
-    const { code, result: { ceci, course, resource, resUrl } } = await getDataCount()
+    const { code, result } = await getDataCount()
     if (code === ERR_SUCCESS) {
-      ceciCount.value = ceci
-      resourceUrlCount.value = resUrl
-      courseCount.value = course
-      resourceCount.value = resource
+      Object.assign(counts, result)
     }
   } catch (error) {
     console.error('Error fetching data:', error)
   }
 }
 
-onMounted(() => {
-  fetchData()
-})
+onMounted(fetchData)
 </script>
-
 <style scoped>
 @import '~@/assets/styles/responsive.scss';
 
@@ -161,8 +165,24 @@ onMounted(() => {
   z-index: -1; /* 设置为较低的值，例如 1 */
 }
 
+.statistics-container {
+  display: flex;
+  justify-content: space-between; /* Adjust as needed */
+  align-items: center; /* Adjust as needed */
+}
+
 .el-col {
   text-align: center;
+}
+
+.el-statistic {
+  margin: 0 10px;
+  padding: 5px 20px;
+  background-color: aliceblue;
+  white-space: nowrap;
+  border-style: solid;
+  border-radius: 3px;
+  border-color: #a0cfff;
 }
 
 .el-card li {
@@ -184,7 +204,7 @@ onMounted(() => {
 
 .card-header {
   font-size: 18px;
-  color: #337ecc;
+  color: #409EFF;
 }
 
 .el-card li {

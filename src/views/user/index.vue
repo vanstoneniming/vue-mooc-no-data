@@ -3,9 +3,13 @@
     <!-- 左侧导航 -->
     <div class="user-nav">
       <div class="user-info">
-        <img class="user-info-avatar" :src="userInfo.avatar" alt="">
-        <p class="user-info-name">{{userInfo.nickname}}</p>
-        <p class="user-info-uid">ID: {{userInfo.uid}}</p>
+        <img class="user-info-avatar" :src="userInfo.avatar || avatar" alt="">
+        <div class="user-info-name"><el-tag>ID: {{userInfo.id}}</el-tag>{{userInfo.username}}</div>
+        <div class="user-info-uid">
+
+          <el-tag>积分: {{userInfo.points}}</el-tag>
+          <el-tag>经验: {{userInfo.experience}}</el-tag>
+        </div>
       </div>
       <dl>
         <dt class="user-nav-title">账号管理</dt>
@@ -16,7 +20,7 @@
           :class="{
             active: activeIndex==index
           }"
-          @click="handleNavClick(item, index)"
+          @click="handleNavClick(item)"
         >
           {{item.title}}
           <i class="iconfont icon-right"></i>
@@ -30,45 +34,38 @@
     </div>
   </div>
 </template>
-<script lang="ts">
-import { computed, defineComponent, ref, watch } from 'vue'
+<script lang="ts" setup name="UserIndex">
+import { computed, ref, watchEffect } from 'vue'
 import { useStore } from 'vuex'
 import { NavConfig, UserInfo } from '@/types'
 import { useRoute, useRouter } from 'vue-router'
+import avatar from '@/assets/images/header.jpg'
+
 const navList = [
-  { title: '账号绑定', url: '/user/binding' },
-  { title: '个人信息', url: '/user/profile' },
-  { title: '操作记录', url: '/user/log' },
-  { title: '收件地址', url: '/user/address' }
+  { title: '账号安全', url: '/user/binding' },
+  { title: '个人信息', url: '/user/profile' }
 ]
-export default defineComponent({
-  name: 'UserIndex',
-  setup () {
-    const store = useStore()
-    const router = useRouter()
-    const route = useRoute()
-    const activeIndex = ref(0)
-    const userInfo = computed<UserInfo>(() => {
-      return store.getters.userInfo
-    })
-    const handleNavClick = (item: NavConfig) => {
-      router.push(item.url as string)
-    }
-    const setActiveIndex = () => {
-      const findIndex = navList.findIndex(item => item.url === route.path)
-      activeIndex.value = findIndex !== -1 ? findIndex : 0
-    }
-    setActiveIndex()
-    watch(() => route.path, setActiveIndex)
-    return {
-      userInfo,
-      navList,
-      activeIndex,
-      handleNavClick
-    }
-  }
+
+const store = useStore()
+const router = useRouter()
+const route = useRoute()
+const activeIndex = ref(0)
+
+const userInfo = computed<UserInfo>(() => {
+  return store.getters.userInfo
 })
+
+const handleNavClick = (item: NavConfig) => {
+  router.push(item.url as string)
+}
+
+watchEffect(() => {
+  const findIndex = navList.findIndex(item => item.url === route.path)
+  activeIndex.value = findIndex !== -1 ? findIndex : 0
+})
+
 </script>
+
 <style lang="scss" scoped>
   @import '~@/assets/styles/variables.scss';
   @import '~@/assets/styles/mixin.scss';
@@ -135,15 +132,17 @@ export default defineComponent({
         border-radius: 50%;
       }
       &-name {
-        font-size: $font-medium;
+        margin: 10px 5px;
+        font-size: $font-largex;
         color: $primary-text;
         line-height: 24px;
       }
-      &-uid {
-        font-size: $font-small;
-        line-height: 20px;
-        color: $regular-text;
-      }
     }
   }
+  .el-tag {
+        font-size: $font-small;
+        line-height: 30px;
+        color: $theme-blue;
+        margin-right: 10px;
+      }
 </style>

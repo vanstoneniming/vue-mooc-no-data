@@ -19,13 +19,16 @@
             <a class="nav-link" @click="navigate('/ceci')">册次</a>
           </li>
           <li :class="{ active: isActive('/course') }" class="nav-item">
-            <a class="nav-link" @click="navigate('/course')">课程</a>
+            <a class="nav-link" @click="navigate('/course')">课例</a>
+          </li>
+          <li :class="{ active: isActive('/resolve') }" class="nav-item">
+            <a class="nav-link" @click="navigate('/resolve')">解析</a>
           </li>
           <li :class="{ active: isActive('/questionrow') }" class="nav-item">
-            <a class="nav-link" @click="navigate('/questionrow')">题帽</a>
+            <a class="nav-link" @click="navigate('/questionrow')">题组</a>
           </li>
           <li :class="{ active: isActive('/question') }" class="nav-item">
-            <a class="nav-link" @click="navigate('/question')">试题</a>
+            <a class="nav-link" @click="navigate('/question')">单题</a>
           </li>
           <li :class="{ active: isActive('/paper') }" class="nav-item">
             <a class="nav-link" @click="navigate('/paper')">试卷</a>

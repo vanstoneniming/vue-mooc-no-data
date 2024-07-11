@@ -1,13 +1,27 @@
 <template>
-  <div class="help">
-    <h3>帮助</h3>
+  <div>
+    <h4>help content</h4>
   </div>
 </template>
 
-<script lang="ts" name="Father" setup>
+<style scoped>
+div {
+  margin: 50px;
+  display: flex;
+  flex-direction: column;
+}
+
+.el-link {
+  margin-top: 30px;
+  font-size: 30px;
+  line-height: 50px;
+}
+
+.el-link .el-icon--right.el-icon {
+  vertical-align: text-bottom;
+}
+</style>
+
+<script>
 
 </script>
-
-<style scoped>
-
-</style>

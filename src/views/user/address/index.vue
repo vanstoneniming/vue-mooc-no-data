@@ -19,7 +19,7 @@
         class="address-list-item"
       >
         <p class="name">{{item.name}}</p>
-        <p>电话：{{item.phone}}</p>
+        <p>电话：{{ item.mobile }}</p>
         <p>地址：{{item.address}}</p>
         <p>邮编：{{item.postcode}}</p>
         <p class="btns">

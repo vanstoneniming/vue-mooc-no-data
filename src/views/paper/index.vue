@@ -8,6 +8,15 @@
             <el-radio-button label="资源" value="res"/>
           </el-radio-group>
         </div>
+        <div v-show="dataList.length==0">
+          <el-empty :image-size="300" description="暂无数据"/>
+        </div>
+        <ul class="ceci-list">
+          <li v-for="(item, index) in dataList" :key="index" :class="{ 'selected': index === selectedIndex }"
+              @click="preview(item, index)">
+            <PaperFromDetail :index="index+1" :item="item"/>
+          </li>
+        </ul>
         <div class="pagination">
           <SelectOptions v-if="false" :multiple="false" :setCode="setSelectCode" codesIn="period,subject"/>
           <el-pagination
@@ -22,19 +31,19 @@
             small
           />
         </div>
-        <div v-show="dataList.length==0">
-          <el-empty :image-size="300" description="暂无数据"/>
-        </div>
-        <ul class="ceci-list">
-          <li v-for="(item, index) in dataList" :key="index" :class="{ 'selected': index === selectedIndex }"
-              @click="preview(item, index)">
-            <PaperFromDetail :index="index+1" :item="item"/>
-          </li>
-        </ul>
       </el-aside>
       <el-main>
         <div v-if="currentPaper">
-          <paper-preview :item="currentPaper"/>
+          <el-tabs type="border-card">
+            <el-tab-pane label="试卷切图">
+              <paper-split-image :item="currentPaper"></paper-split-image>
+            </el-tab-pane>
+            <el-tab-pane label="试卷详情">
+              <paper-preview :item="currentPaper"/>
+            </el-tab-pane>
+            <el-tab-pane label="pdf预览处理">
+            </el-tab-pane>
+          </el-tabs>
         </div>
         <div v-else>暂无数据展示</div>
       </el-main>
@@ -51,6 +60,7 @@ import PaperFromDetail from '@/components/paper/ListDetail.vue'
 import PaperPreview from '@/components/paper/PaperPreview.vue'
 import SelectOptions from '@/components/common/SelectOptions.vue'
 import { PaperConfig } from '@/types'
+import PaperSplitImage from '@/components/paper/PaperSplitImage.vue'
 
 const dataList = ref<PaperConfig[]>([])
 const currentPage = ref<number>(1)
@@ -82,9 +92,13 @@ async function fetchData () {
       }
     })
     if (code === ERR_SUCCESS && data) {
-      dataList.value = data
+      const paperList = data.map(obj => {
+        obj.papercontent = obj.papercontent.replace(/ src=/g, ' src_url=')
+        return obj
+      })
+      dataList.value = paperList
+      currentPaper.value = paperList[0]
       totalSize.value = total
-      currentPaper.value = data[0]
       selectedIndex.value = 0
     }
   } catch (error) {
@@ -112,7 +126,7 @@ defineComponent({
 .radio-buttons {
   display: flex;
   justify-content: center;
-  margin-top: 5px;
+  margin: 10px;
 }
 
 .ceci-list {
@@ -156,8 +170,8 @@ li.selected{
 }
 
 .el-aside {
-  margin: 0;
-  padding: 0;
+  margin: 15px 0;
+  padding: 5px 0;
   width: 360px;
   position: fixed;
   border-radius: 5px;

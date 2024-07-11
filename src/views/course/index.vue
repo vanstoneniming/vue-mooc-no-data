@@ -33,6 +33,7 @@
             <el-button size="small" v-if="thumbs" type="success" @click="openOriginal(thumbs)">新页大图</el-button>
             <el-button size="small" v-if="thumbs" type="success" @click="thumbnails(title,thumbs,500)">弹层略图</el-button>
             <el-button size="small" v-if="original_link" type="success" @click="openOriginal(original_link)">原始链接</el-button>
+            <el-button size="small" v-if="original_link" type="success" @click="resolveUrl(original_link)">解析链接</el-button>
             <el-button size="small" type="success" @click="goToDetail(id)">配套资源</el-button>
           </el-button-group>
         </div>
@@ -161,6 +162,10 @@ const goToDetail = (id: number) => {
 
 const openOriginal = (url: string) => {
   window.open(url, '_blank', 'noopener,noreferrer')
+}
+
+const resolveUrl = (url: string) => {
+  router.push({ path: 'Resolve', query: { url } })
 }
 
 const goToCeci = (id: number) => {
