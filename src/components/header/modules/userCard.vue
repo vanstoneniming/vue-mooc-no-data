@@ -8,8 +8,8 @@
         <p class="section">{{userInfo.email}}</p>
         <p class="card-top-info-nickname">{{userInfo.nickname}}</p>
         <p class="card-top-info-number">
-          <span>经验：{{userInfo.id}}</span>
-          <span>积分：{{userInfo.id}}</span>
+          <span>经验：{{userInfo.experience}}</span>
+          <span>积分：{{userInfo.points}}</span>
         </p>
       </div>
     </div>
@@ -19,7 +19,7 @@
         v-for="(item, index) in linkList"
         :key="index"
         class="card-links-item">
-        <router-link :to="item.url" target="_blank">
+        <router-link :to="item.url">
           <i :class="['iconfont', item.icon]"></i>
           <span>{{item.title}}</span>
         </router-link>

@@ -1,4 +1,12 @@
-import { BindingConfig, LoginParams, MoocListResponseConfig, MoocResponseConfig, ResponseConfig, UserInfo } from '@/types'
+import {
+  BindingConfig,
+  DonateConfig, DonatePayConfig,
+  LoginParams,
+  MoocListResponseConfig,
+  MoocResponseConfig,
+  ResponseConfig,
+  UserInfo
+} from '@/types'
 import axios from '@/utils/axios'
 
 // user login 用户登录
@@ -31,8 +39,32 @@ export function getUserInfo (): Promise<ResponseConfig<UserInfo>> {
 }
 
 // get user binding 获取用户绑定信息
-export function getUserBinding (): Promise<MoocResponseConfig<BindingConfig>> {
-  return axios.get('/auth/mock/user/binding.json')
+export function getUserBinding (): Promise<ResponseConfig<BindingConfig>> {
+  return axios.get('/api/system/user/bind/info')
+}
+
+export function getDonationQR (params: {fee: number; title: string}): Promise<ResponseConfig<DonateConfig>> {
+  return axios.post('/api/system/user/donation/qr', params)
+}
+
+export function checkPaymentStatus (params: {donate_id: string}): Promise<ResponseConfig<DonatePayConfig>> {
+  return axios.post('/api/system/user/donation/pay_status', params)
+}
+
+export function sendEmailVerifyCode (params: {email: string}): Promise<ResponseConfig<any>> {
+  return axios.post('/api/system/user/email/verify', params)
+}
+export function sendPhoneVerifyCode (params: {mobile: string}): Promise<ResponseConfig<any>> {
+  return axios.post('/api/system/user/mobile/verify', params)
+}
+export function bindEmail (params: {email: string; email_verify_code: string}): Promise<ResponseConfig<any>> {
+  return axios.post('/api/system/user/email/bind', params)
+}
+export function bindMobile (params: {mobile: string; mobile_verify_code: string}): Promise<ResponseConfig<any>> {
+  return axios.post('/api/system/user/mobile/bind', params)
+}
+export function modifyPassword (params: {oldPass: string; password: string}): Promise<ResponseConfig<any>> {
+  return axios.post('/api/system/user/set/modify-password', params)
 }
 
 // get user logs 获取用户登陆日志

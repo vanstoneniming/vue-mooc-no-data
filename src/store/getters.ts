@@ -1,4 +1,4 @@
-import { UserState } from '@/types/index'
+import { UserState } from '@/types'
 
 export const token = (state: any) => (state.user as UserState).token
 

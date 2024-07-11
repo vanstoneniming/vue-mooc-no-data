@@ -15,9 +15,10 @@ const mutations = {
   [types.SET_TOKEN] (state: UserState, token: string) {
     state.token = token
   },
-  [types.SET_USER_INFO] (state: UserState, userInfo: object) {
+  [types.SET_USER_INFO] (state: UserState, userInfo: UserState['userInfo']) {
     state.userInfo = userInfo
   }
+
 }
 
 const actions = {

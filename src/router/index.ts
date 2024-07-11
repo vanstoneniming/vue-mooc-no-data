@@ -10,7 +10,6 @@ const basicRoutes: AppRouteRecordRaw[] = [
   {
     path: '/',
     redirect: '/home'
-    // component: () => import('@/views/ceci/index.vue')
   },
   {
     path: '/home',
@@ -21,6 +20,21 @@ const basicRoutes: AppRouteRecordRaw[] = [
     path: '/help',
     name: 'Help',
     component: () => import('@/views/help/index.vue')
+  },
+  {
+    path: '/workflow',
+    name: 'Workflow',
+    component: () => import('@/views/workflow/index.vue')
+  },
+  {
+    path: '/resolve',
+    name: 'Resolve',
+    component: () => import('@/views/resolve/index.vue')
+  },
+  {
+    path: '/donate',
+    name: 'Donate',
+    component: () => import('@/views/help/donate.vue')
   },
   {
     path: '/ceci',
@@ -56,6 +70,11 @@ const basicRoutes: AppRouteRecordRaw[] = [
     path: '/paper',
     name: 'Paper',
     component: () => import('@/views/paper/index.vue')
+  },
+  {
+    path: '/paper-split',
+    name: 'PaperSplit',
+    component: () => import('@/components/paper/PaperSplitImage.vue')
   },
   {
     path: '/paper/:id',

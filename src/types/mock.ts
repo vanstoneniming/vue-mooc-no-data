@@ -61,6 +61,7 @@ export interface CodeOptionsConfig {
   label: string;
   value: string;
 }
+
 // Define the type for dictCodeOptions
 interface DictCodeOption {
   label: string;
@@ -90,11 +91,17 @@ export interface LoginParams {
 export interface UserInfo {
   id: string | number;
   avatar?: string;
+  name?: string;
+  username?: string;
   nickname?: string;
+  experience?: string;
+  points?: string;
   job?: string;
   integral?: number | string;
   exp?: number | string;
   city?: string;
+  gender?: number | string;
+  update_datetime?: string;
   signature?: string;
   notice?: number | string;
   latest?: any;
@@ -110,9 +117,19 @@ export interface NoticeConfig {
 
 // binding 类型
 export interface BindingConfig {
-  email?: string;
-  phone?: string;
-  password?: boolean;
+  email: string;
+  email_verify_status: boolean;
+  mobile: string;
+  mobile_verify_status: boolean;
+}
+// binding 类型
+export interface DonateConfig {
+  QRcode_url: string;
+  code_url: string;
+  donate_id: string;
+}
+export interface DonatePayConfig {
+  pay_status: number;
 }
 
 // log 类型
@@ -130,13 +147,16 @@ export interface DataCountConfig {
   'ceci': number;
   'resource': number;
   'resUrl': number;
+  'questionRow': number;
+  'question': number;
+  'paper': number;
 }
 
 // address 类型
 export interface AddressConfig {
   id: string;
   name: string;
-  phone: string;
+  mobile: string;
   address: string;
   postcode: string;
   isDefault: boolean;
