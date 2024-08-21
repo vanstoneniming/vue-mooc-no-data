@@ -1,28 +1,23 @@
 <template>
+  <down-file-dialog v-model="dialogFormVisible" :title="dialogTitle" :url="currentUrl"/>
   <el-card shadow="always">
     <template #header>
       <div class="card-header">
-        <el-tag>{{ updateDate(data.update_datetime) }}</el-tag>
-        <span>{{ data.resource_name }}</span>
-        <el-tag>{{ data.format }}</el-tag>
+        <span>官网链接</span>
       </div>
     </template>
-    <div class="ceci-info">
+    <div v-if="data.length==0">
+      <el-empty :image-size="80" description="暂无数据"/>
+    </div>
+    <div v-else class="ceci-info">
       <ul>
-        <li v-for="(item, index) in storages" :key="index">
-          <div class="flex-container">
-            <el-link @click="openOriginal(item)">{{ shortenText(item, 50) }}</el-link>
-          </div>
-          <div class="flex-container">
-            <div class="remind">
-              <el-tooltip v-if="commitStr(item)" :content="commitStr(item)" effect="dark" placement="right">
-                <el-button type="danger">403 Forbidden</el-button>
-              </el-tooltip>
-            </div>
-            <div class="right-aligned-buttons">
-              <el-button size="small" @click="copyLink(item, 'json')">链接字典</el-button>
-              <el-button size="small" @click="copyLink(item, 'text')">链接文本</el-button>
-            </div>
+        <li v-for="(item, index) in data" :key="index">
+          <div v-for="(value, key) in item" :key="key" class="flex-container">
+            <el-tag effect="dark" size="large">{{ key }}</el-tag>
+            <el-text size="large" truncated type="primary" @click="openOriginal(value[0])">{{
+                shortenText(value[0], 100)
+              }}
+            </el-text>
           </div>
         </li>
       </ul>
@@ -30,65 +25,44 @@
   </el-card>
 </template>
 
-<script setup lang="ts" name="StorageDetail">
-import { ElMessage } from 'element-plus/lib'
+<script lang="ts" setup>
+import { defineProps, ref } from 'vue'
 import { shortenText } from '@/hooks/utils/helper'
-import { computed } from 'vue'
-import ClipboardJS from 'clipboard'
+import DownFileDialog from '@/components/common/DownFileDialog.vue'
 
-// eslint-disable-next-line no-undef
-const props = defineProps({
-  data: {
-    type: Object,
-    required: true
-  }
-})
+// Define props with appropriate types
+defineProps<{
+  data: Record<string, any>[];
+}>()
 
-function copyLink (url: string, type: string) {
-  const title = props.data.resource_name
-  let text: string
+const dialogFormVisible = ref(false)
+const currentUrl = ref('')
+const dialogTitle = ref('')
 
-  if (type === 'text') {
-    text = `资源名称： ${title}\n资源链接： ${url}`
-  } else {
-    text = `{"url": "${url}", "title": "${title}"}`
+const openOriginal = (url: string) => {
+  const fileExtension = url.split('.').pop()?.toLowerCase()
+
+  if (!fileExtension) {
+    console.error('无法解析文件扩展名')
+    return
   }
 
-  const clipboard = new ClipboardJS('div.right-aligned-buttons .el-button', {
-    text: () => text
-  })
+  if (url.includes('.exp.bcevod.com/')) {
+    currentUrl.value = url
+    dialogTitle.value = '资源下载受限，请添加 referrer: https://jpk.eduyun.cn/'
+    dialogFormVisible.value = true
+    return
+  }
 
-  clipboard.on('success', () => {
-    ElMessage.success('链接已复制到剪贴板！')
-    clipboard.destroy()
-  })
+  if (fileExtension === 'm3u8') {
+    currentUrl.value = url
+    dialogTitle.value = 'M3U8 文件不能直接下载，请使用支持 M3U8 的播放器观看，或者下载到本地后再观看。'
+    dialogFormVisible.value = true
+    return
+  }
 
-  clipboard.on('error', (error) => {
-    ElMessage.error('链接复制失败: ' + error.action)
-    clipboard.destroy()
-  })
-}
-
-function openOriginal (url: string) {
   window.open(url, '_blank', 'noopener,noreferrer')
 }
-
-function commitStr (item: string) {
-  if (item.includes('.exp.bcevod.com/')) {
-    return '添加referrer: https://jpk.eduyun.cn/'
-  } else {
-    return ''
-  }
-}
-
-function updateDate (dateStr: string) {
-  return dateStr.split('T')[0]
-}
-
-const storages = computed(() => {
-  return props.data.storages.split(',')
-})
-
 </script>
 
 <style scoped>
@@ -100,10 +74,7 @@ const storages = computed(() => {
 .flex-container {
   display: flex;
   align-items: center;
-}
-
-.remind {
-  width: 150px;
+  cursor: grab;
 }
 
 .right-aligned-buttons {
@@ -111,7 +82,11 @@ const storages = computed(() => {
 }
 
 .el-card {
-  margin: 5px;
+  margin: 10px 10px 10px 0;
+}
+
+.card-header span {
+  white-space: nowrap;
 }
 
 .el-card ul {
@@ -121,18 +96,27 @@ const storages = computed(() => {
 .el-link {
   font-size: 14px;
   color: deepskyblue;
-  white-space: nowrap; /* 强制文本在一行内显示 */
-  overflow: hidden; /* 隐藏溢出的文本 */
-  text-overflow: ellipsis; /* 在溢出时显示省略号 */
-}
-
-.el-button {
-  margin: 5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .el-tag {
-  color: seagreen;
-  margin: 0 10px;
+  min-width: 60px;
+  color: lightyellow;
+  margin: 5px 20px;
+}
+
+.descriptions {
+  margin: 20px 0;
+}
+
+.el-form-item {
+  min-width: 100px;
+}
+
+.file-list .el-text {
+  cursor: grab;
 }
 
 .ceci-info {

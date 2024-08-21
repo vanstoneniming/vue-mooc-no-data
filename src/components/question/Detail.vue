@@ -1,8 +1,8 @@
 <template>
   <el-card>
     <div class="item-body">
-      <div class="header-content">
-        <el-tag round type="info">{{ index }}</el-tag>
+      <div class="question-row-header">
+        <el-tag round type="info">{{ item.questionNo }}</el-tag>
         <div class="quest-title" v-html="sanitizeHTML(item.question)"></div>
       </div>
       <div class="quest-select" v-html="sanitizeHTML(item.questionselect)"></div>
@@ -18,15 +18,12 @@
     </template>
   </el-card>
 </template>
-<script lang="ts" setup name="QuestionDetail">
+<script lang="ts" name="QuestionDetail" setup>
 import { ref } from 'vue'
 import { sanitizeHTML } from '@/hooks/utils/helper'
 
 // eslint-disable-next-line no-undef
-defineProps({
-  item: Object,
-  index: Number
-})
+defineProps(['item'])
 
 const showAnswer = ref(false)
 
@@ -36,41 +33,31 @@ function toggleAnswer () {
 </script>
 
 <style scoped>
-.header-content {
-  display: flex; /* Use flexbox to align elements in a row */
+.question-row-header {
+  display: flex;
+}
+
+.el-card {
+  border-radius: 8px;
 }
 
 .item-body {
-  height: 220px;
+  //height: 220px;
   overflow: auto;
 }
 
 .el-tag {
-  margin-right: 8px; /* Add spacing between el-tag and quest-title */
+  margin-right: 8px;
 }
 
 .answer-button {
-  color: darkolivegreen;
+  color: darkseagreen;
 }
 
-.ceci-list li {
-  margin: 10px;
-  padding: 10px;
-  box-sizing: border-box;
-  text-align: left;
-  cursor: grab;
-  width: 100%; /* 让所有的 li 高度自动撑满 */
-  background-color: #f3f5f7;
-}
-
-.ceci-item img {
-  margin: 0 auto; /* 水平居中 <img> 元素 */
-}
-
-/* Style for question title */
 .quest-title {
   font-size: 18px;
   font-weight: bold;
+  margin-bottom: 10px;
 }
 
 .quest-answer {
@@ -80,17 +67,17 @@ function toggleAnswer () {
   border-color: burlywood;
   background-color: honeydew;
   border-radius: 5px;
-  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); /* 添加阴影，偏移量为 (2px, 2px)，模糊半径为 4px，颜色为 rgba(0, 0, 0, 0.2) */
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .quest-answer p {
   color: darkred;
 }
 
-.quest-select{
+.quest-select {
   margin-left: 40px;
 }
-/* Style for description */
+
 .quest-describe {
   font-size: 14px;
   color: #2688E8;
